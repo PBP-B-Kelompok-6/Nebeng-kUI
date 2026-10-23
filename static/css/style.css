@@ -6,37 +6,151 @@
 }
 
 body {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+    margin: 0;
+    padding: 0;
     background-color: #F9FAFB;
     color: #1F2937;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-header {
-    background-color: #16A34A;
-    color: white;
-    padding: 15px 30px;
+.app-layout {
+    display: flex;
+    min-height: 100vh;
+    /* Memastikan tingginya selalu penuh seukuran layar */
+}
+
+/* --- KOLOM KIRI (SIDEBAR) --- */
+.sidebar {
+    width: 260px;
+    background-color: #fdfbff;
+    /* Warna putih dengan rona ungu sangat tipis */
+    border-right: 1px solid #eaeaea;
+    /* Garis pemisah antara sidebar dan konten */
+    display: flex;
+    flex-direction: column;
+    padding: 24px 0;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 24px;
+    margin-bottom: 40px;
+}
+
+.logo-text {
+    font-size: 20px;
+    font-weight: 700;
+    color: #5c00e6;
+}
+
+.logo-img {
+    width: 48px;
+    height: auto;
+    object-fit: contain;
+}
+
+.menu-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 0 16px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    text-decoration: none;
+    color: #4b5563;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.nav-icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+/* Efek saat menu disorot mouse atau sedang aktif dibuka */
+.nav-item:hover,
+.nav-item.active {
+    background-color: #f3f0ff;
+    /* Background ungu muda */
+    color: #5c00e6;
+    /* Teks ungu pekat */
+}
+
+/* --- KOLOM KANAN (WRAPPER) --- */
+.main-wrapper {
+    flex-grow: 1;
+    /* Menyuruh div ini merampas seluruh sisa ruang kosong di kanan */
+    display: flex;
+    flex-direction: column;
+}
+
+.content-area {
+    padding: 24px 32px;
+    /* Memberi jarak aman agar isi konten tidak menempel ke garis */
+    flex-grow: 1;
+}
+
+/* Container utama header (tetap sama) */
+.navbar-global {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    padding: 16px 32px;
+    background-color: #fdfbff;
+    border-bottom: 1px solid #eaeaea;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-header h1 {
-    font-size: 24px;
+/* Bagian Kiri */
+.co2-tracker {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #0a6b6b;
+    font-weight: 500;
 }
 
-header nav a {
-    color: white;
+/* Mengatur ukuran gambar daun agar pas */
+.ikon-daun {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    /* Memastikan gambar tidak gepeng */
+}
+
+/* Bagian Kanan (Tombol bulat) */
+.profile-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 44px;
+    height: 44px;
+    background-color: #5c00e6;
+    border-radius: 50%;
+    /* Membuat kotak menjadi bulat */
     text-decoration: none;
-    margin-left: 20px;
-    font-size: 16px;
+    overflow: hidden;
+    /* PENTING: Memotong ujung gambar profil yang kotak agar ikut membulat */
 }
 
-header nav a:hover {
-    text-decoration: underline;
+/* Mengatur gambar profil menuhin tombol bulatnya */
+.ikon-profil {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Memastikan gambar profil proporsional */
 }
+
+
 
 
 .btn-login {

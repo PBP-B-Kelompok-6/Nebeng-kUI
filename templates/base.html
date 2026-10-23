@@ -12,25 +12,53 @@
     {% endblock meta %}
 </head>
 <body>
+    <!-- Pembungkus Utama -->
+    <div class="app-layout">
 
-    <!-- HEADER / NAVBAR -->
-    <header>
-        <h1>Nebeng-kUI</h1>
-        <nav>
-            <a href="/">Beranda</a>
-            
-        </nav>
-    </header>
+        <!-- KOLOM KIRI: Sidebar Navigasi -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <img src="{% static 'images/nebengkui-logo.png' %}" alt="Logo" class="logo-img">
+                <span class="logo-text">Nebeng-kUI</span>
+            </div>
 
-    <main>
-        {% block content %}
-        {% endblock content %}
-    </main>
+            <nav class="menu-nav">
+                <a href="#" class="nav-item">
+                    <img src="{% static 'images/icon-forum.png' %}" class="nav-icon"> Forum Tebengan
+                </a>
+                <a href="#" class="nav-item">
+                    <img src="{% static 'images/icon-map.png' %}" class="nav-icon"> Peta Titik Kumpul
+                </a>
+                <a href="#" class="nav-item active">
+                    <img src="{% static 'images/icon-reservasi.png' %}" class="nav-icon"> Reservasi & Chat
+                </a>
+                <a href="#" class="nav-item">
+                    <img src="{% static 'images/icon-profile2.png' %}" class="nav-icon"> Profil & Reward
+                </a>
+            </nav>
+        </aside>
 
-    <!-- FOOTER -->
-    <footer>
-        <p>&copy; 2026 Nebeng-kUI - Eco-Campus Carpooling</p>
-    </footer>
+        <!-- KOLOM KANAN: Penampung Header & Konten -->
+        <div class="main-wrapper">
 
+            <!-- Masukkan kode <header class="navbar-global"> yang sudah kita buat tadi ke dalam sini -->
+            <header class="navbar-global">
+                <div class="co2-tracker">
+                    <img src="{% static 'images/icon-daun.png' %}" alt="Ikon Daun" class="ikon-daun">
+                    <span>120 kg CO2 Saved</span>
+                </div>
+                <a href="#" class="profile-btn">
+                    <img src="{% static 'images/icon-profile.png' %}" alt="Profil" class="ikon-profil">
+                </a>
+            </header>
+
+            <!-- Area tempat fitur chat-mu (3 div) akan muncul nanti -->
+            <main class="content-area">
+                {% block content %}
+                {% endblock content %}
+            </main>
+
+        </div>
+    </div>
 </body>
 </html>
