@@ -182,3 +182,40 @@ footer {
     font-size: 14px;
     margin-top: auto;
 }
+
+/* AKUN */
+.sidebar-user {
+    margin-top: auto;              
+    padding: 16px 16px 0;
+    border-top: 1px solid #eaeaea;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sidebar-user-info {
+    display: flex;
+    flex-direction: column;
+    padding: 0 16px;
+}
+
+.sidebar-user-label {
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+.sidebar-username {
+    font-weight: 600;
+    color: #1F2937;
+    word-break: break-all;
+}
+
+.logout-btn {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font: inherit;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+}

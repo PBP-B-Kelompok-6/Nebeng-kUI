@@ -79,6 +79,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'nebengkui.wsgi.application'
 
+LOGIN_URL = "users:login"
+LOGIN_REDIRECT_URL = "main:show_main"
+LOGOUT_REDIRECT_URL = "main:show_main"
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
