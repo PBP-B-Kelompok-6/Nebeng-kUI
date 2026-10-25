@@ -35,6 +35,20 @@
                 <a href="#" class="nav-item">
                     <img src="{% static 'images/icon-profile2.png' %}" class="nav-icon"> Profil & Reward
                 </a>
+                {% if user.is_authenticated %}
+                    <div class="sidebar-user">
+                    <span class="sidebar-username">{{ user.username }}</span>
+                    <form method="post" action="{% url 'users:logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="logout-btn">Logout</button>
+                    </form>
+                    </div>
+                    {% else %}
+                    <div class="sidebar-user">
+                    <a href="{% url 'users:login' %}" class="logout-btn">Login</a>
+                    <a href="{% url 'users:register' %}" class="logout-btn">Register</a>
+                    </div>
+                {% endif %}
             </nav>
         </aside>
 
