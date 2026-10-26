@@ -23,16 +23,17 @@
             </div>
 
             <nav class="menu-nav">
-                <a href="forum" class="nav-item" {% if '/forum/' in request.path %}active{% endif %}>
+                <!-- ganti # dengan url 'nama_modul:show_modul' -->
+                <a href="#" class="nav-item {% if '/forum/' in request.path %}active{% endif %}"> 
                     <img src="{% static 'images/icon-forum.png' %}" class="nav-icon"> Forum Tebengan
                 </a>
-                <a href="peta" class="nav-item" {% if '/peta/' in request.path %}active{% endif %}>
+                <a href="#" class="nav-item {% if '/peta/' in request.path %}active{% endif %}">
                     <img src="{% static 'images/icon-map.png' %}" class="nav-icon"> Peta Titik Kumpul
                 </a>
-                <a href="reservasi" class="nav-item" {% if '/reservasi/' in request.path %}active{% endif %}>
+                <a href="{% url 'reservasi:show_reservasi' %}" class="nav-item {% if '/reservasi/' in request.path %}active{% endif %}">
                     <img src="{% static 'images/icon-reservasi.png' %}" class="nav-icon"> Reservasi & Chat
                 </a>
-                <a href="profil" class="nav-item" {% if '/profil/' in request.path %}active{% endif %}>
+                <a href="#" class="nav-item {% if '/profil/' in request.path %}active{% endif %}"">
                     <img src="{% static 'images/icon-profile2.png' %}" class="nav-icon"> Profil & Reward
                 </a>
             </nav>
