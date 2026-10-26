@@ -4,8 +4,71 @@
 {% block title %}Reservasi & Chat - Nebeng-kUI{% endblock title %}
 
 {% block content %}
-<div class="chat-container">
-    <h1>Halaman Reservasi & Chat</h1>
-    <p>Area ini siap untuk di-styling dengan 3 div utama.</p>
-</div>
-{% endblock content %}
+<div class="reservasi-page">
+
+    <!-- DIV 1: Bagian Atas (Header & Tombol) -->
+    <div class="reservasi-header">
+        <div class="header-title">
+            <span class="subtitle-text">RESERVASI & OBROLAN</span>
+            <h1>Kelola Perjalanan & Chat</h1>
+        </div>
+        <button class="btn-buat-tebengan">
+            <img src="{% static 'images/icon-forum-active.png' %}"> Buat Tebengan Baru
+        </button>
+    </div>
+
+    <!-- Pembungkus untuk membelah Kiri (Div 2) dan Kanan (Div 3) -->
+    <div class="reservasi-content-wrapper">
+
+        <!-- DIV 2: Elemen Sebelah Kiri (Search, Filter, List Chat) -->
+        <div class="sidebar-kiri">
+            <div class="search-bar">
+                <input type="text" placeholder="Cari nama driver atau rute...">
+            </div>
+            <div class="filter-pills">
+                <button class="pill active">Semua</button>
+                <button class="pill">Menunggu</button>
+                <button class="pill">Diterima</button>
+                <button class="pill">Selesai</button>
+            </div>
+            <div class="chat-list">
+                <!-- Daftar kartu chat akan di-loop di sini nanti -->
+            </div>
+        </div>
+
+        <!-- DIV 3: Elemen Sebelah Kanan (Header Info, Detail Trip, Chat, Input) -->
+        <div class="ruang-obrolan-kanan">
+            <!-- Info Profil & Status di atas -->
+            <div class="chat-profil-header">
+                <div class="profil-info">
+                    <h3>Rizky Pratama</h3>
+                    <p>EV Commuter • Fasilkom UI -> Stasiun Pondok Cina</p>
+                </div>
+                <div class="status-badge">Status: Diterima</div>
+            </div>
+
+            <!-- Kartu Detail Titik Jemput -->
+            <div class="trip-detail-card">
+                <!-- Info lokasi dan tombol Ubah Titik/Buka Peta -->
+            </div>
+
+            <!-- Area Riwayat Balon Chat -->
+            <div class="chat-history-area">
+                <!-- Balon chat kiri dan kanan -->
+            </div>
+
+            <!-- Area Input Pesan (Terikat di bawah Div 3) -->
+            <div class="chat-input-area">
+                <form action="#" method="POST" class="chat-form">
+                    {% csrf_token %}
+                    <!-- Ikon attachment/lokasi -->
+                    <input type="text" placeholder="Ketik pesan untuk driver/passenger...">
+                    <button type="submit" class="btn-kirim">
+                        <img src="{% static 'images/icon-kirim.png' %}" alt="Kirim">
+                    </button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>{% endblock content %}
