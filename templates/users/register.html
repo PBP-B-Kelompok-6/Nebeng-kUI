@@ -1,20 +1,41 @@
 {% extends "base.html" %}
 {% block content %}
-<main>
-  <h1>Buat Akun</h1>
-  <form method="post" action="{% url 'users:register' %}">
-    {% csrf_token %}
-    {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
-    {% for field in form %}
-      <div>
-        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-        {{ field }}
-        {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
-        {% for error in field.errors %}<p>{{ error }}</p>{% endfor %}
-      </div>
-    {% endfor %}
-    <button type="submit">Daftar</button>
-  </form>
-  <p>Sudah punya akun? <a href="{% url 'users:login' %}">Login di sini</a>.</p>
-</main>
+<div class="auth-page">
+  <div class="auth-layout">
+    <!-- <div class="auth-brand">
+      <h2>Gabung Nebeng-kUI</h2>
+      <p>Buat akun dengan email UI-mu. Satu akun bisa jadi pemberi tebengan sekaligus pencari tebengan.</p>
+    </div> -->
+
+    <div class="auth-form-wrap">
+      <h1>Buat akun yuk.</h1>
+
+      
+      <form method="post" action="{% url 'users:register' %}">
+        {% csrf_token %}
+
+        {% for error in form.non_field_errors %}
+          <p class="auth-error">{{ error }}</p>
+        {% endfor %}
+
+        {% for field in form %}
+          <div class="auth-field">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}
+              <div class="auth-help">{{ field.help_text|safe }}</div>
+            {% endif %}
+            {% for error in field.errors %}
+              <p class="auth-error">{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endfor %}
+
+        <button type="submit" class="btn-auth">Daftar</button>
+      </form>
+
+      <p class="auth-switch">Sudah punya akun? <a href="{% url 'users:login' %}">Login di sini</a></p>
+    </div>
+  </div>
+</div>
 {% endblock content %}

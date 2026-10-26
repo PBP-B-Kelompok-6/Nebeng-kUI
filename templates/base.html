@@ -35,20 +35,6 @@
                 <a href="profil" class="nav-item" {% if '/profil/' in request.path %}active{% endif %}>
                     <img src="{% static 'images/icon-profile2.png' %}" class="nav-icon"> Profil & Reward
                 </a>
-                {% if user.is_authenticated %}
-                    <div class="sidebar-user">
-                    <span class="sidebar-username">{{ user.username }}</span>
-                    <form method="post" action="{% url 'users:logout' %}">
-                        {% csrf_token %}
-                        <button type="submit" class="logout-btn">Logout</button>
-                    </form>
-                    </div>
-                    {% else %}
-                    <div class="sidebar-user">
-                    <a href="{% url 'users:login' %}" class="logout-btn">Login</a>
-                    <a href="{% url 'users:register' %}" class="logout-btn">Register</a>
-                    </div>
-                {% endif %}
             </nav>
         </aside>
 
@@ -61,9 +47,21 @@
                     <img src="{% static 'images/icon-daun.png' %}" alt="Ikon Daun" class="ikon-daun">
                     <span>120 kg CO2 Saved</span>
                 </div>
-                <a href="#" class="profile-btn">
-                    <img src="{% static 'images/icon-profile.png' %}" alt="Profil" class="ikon-profil">
-                </a>
+                <div class="nav-actions">
+                    {% if user.is_authenticated %}
+                        <span class="nav-username">{{ user.username }}</span>
+                        <form method="post" action="{% url 'users:logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-nav btn-nav-outline">Logout</button>
+                        </form>
+                        <a href="#" class="profile-btn">
+                            
+                        </a>
+                    {% else %}
+                        <a href="{% url 'users:login' %}" class="btn-nav btn-nav-outline">Login</a>
+                        <a href="{% url 'users:register' %}" class="btn-nav btn-nav-primary">Register</a>
+                    {% endif %}
+                </div>
             </header>
 
             <!-- Area tempat fitur chat-mu (3 div) akan muncul nanti -->
