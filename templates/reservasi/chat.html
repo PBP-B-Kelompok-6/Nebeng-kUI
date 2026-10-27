@@ -3,6 +3,11 @@
 
 {% block title %}Reservasi & Chat - Nebeng-kUI{% endblock title %}
 
+{% block meta %}
+<!-- CSS Khusus Modul Reservasi dipanggil hanya saat halaman ini dibuka -->
+<link rel="stylesheet" href="{% static 'css/reservasi.css' %}">
+{% endblock meta %}
+
 {% block content %}
 <div class="reservasi-page">
 
@@ -32,29 +37,162 @@
                 <button class="pill">Selesai</button>
             </div>
             <div class="chat-list">
-                <!-- Daftar kartu chat akan di-loop di sini nanti -->
+            
+                <!-- Kartu Chat 1 (Sedang Aktif / Dipilih) -->
+                <div class="chat-card active">
+                    <div class="chat-avatar">
+                        <!-- Ganti src dengan gambar profil sementaramu -->
+                        <img src="{% static 'images/profile2.png' %}" alt="Rizky"
+                            onerror="this.src='https://ui-avatars.com/api/?name=Rizky+Pratama&background=f3effc&color=5c00e6'">
+                        <span class="status-dot online"></span>
+                    </div>
+                    <div class="chat-info">
+                        <div class="chat-info-top">
+                            <h4>Rizky Pratama</h4>
+                            <span class="chat-time">10:42</span>
+                        </div>
+                        <div class="chat-info-middle">
+                            <span class="badge badge-diterima">Diterima</span>
+                            <span class="chat-route">Fasilkom UI &rarr; Stasiun Pondok Cina</span>
+                        </div>
+                        <div class="chat-info-bottom">
+                            <p>Siap bang, saya tunggu di depan lobby gedung A ya!</p>
+                        </div>
+                    </div>
+                </div>
+            
+                <!-- Kartu Chat 2 (Menunggu) -->
+                <div class="chat-card">
+                    <div class="chat-avatar">
+                        <img src="{% static 'images/profile2.png' %}" alt="Anindya"
+                            onerror="this.src='https://ui-avatars.com/api/?name=Anindya+M&background=f3effc&color=5c00e6'">
+                        <span class="status-dot offline"></span>
+                    </div>
+                    <div class="chat-info">
+                        <div class="chat-info-top">
+                            <h4>Anindya Maharani</h4>
+                            <span class="chat-time">Kemarin</span>
+                        </div>
+                        <div class="chat-info-middle">
+                            <span class="badge badge-menunggu">Menunggu</span>
+                            <span class="chat-route">Perpustakaan Pusat &rarr; Kukusan Teknik</span>
+                        </div>
+                        <div class="chat-info-bottom">
+                            <p>Halo kak, apakah seat-nya masih tersedia untuk jam 3?</p>
+                        </div>
+                    </div>
+                </div>
+            
             </div>
         </div>
 
         <!-- DIV 3: Elemen Sebelah Kanan (Header Info, Detail Trip, Chat, Input) -->
         <div class="ruang-obrolan-kanan">
             <!-- Info Profil & Status di atas -->
+            <!-- Info Profil & Status di atas -->
             <div class="chat-profil-header">
-                <div class="profil-info">
-                    <h3>Rizky Pratama</h3>
-                    <p>EV Commuter • Fasilkom UI -> Stasiun Pondok Cina</p>
+            
+                <!-- Bagian Kiri: Foto dan Info -->
+                <div class="profil-header-kiri">
+                    <div class="header-avatar-box">
+                        <img src="{% static 'images/dummy-avatar.png' %}" alt="Rizky" class="header-avatar"
+                            onerror="this.src='https://ui-avatars.com/api/?name=Rizky+Pratama&background=f3effc&color=5c00e6'">
+                        <span class="status-dot online"></span>
+                    </div>
+                    <div class="profil-info">
+                        <h3>Rizky Pratama</h3>
+                        <p>
+                            <!-- Ikon mobil kecil di sebelah teks EV Commuter -->
+                            <img src="{% static 'images/icon-car-green.png' %}" alt="Car" class="inline-icon"
+                                onerror="this.src='https://img.icons8.com/ios-filled/50/4b5563/car.png'">
+                            EV Commuter • Fasilkom UI &rarr; Stasiun Pondok Cina
+                        </p>
+                    </div>
                 </div>
-                <div class="status-badge">Status: Diterima</div>
+            
+                <!-- Bagian Kanan: Tombol Info & Status -->
+                <div class="profil-header-kanan">
+                    <button class="btn-info-bulat">i</button>
+                    <div class="status-badge-besar">
+                        <img src="{% static 'images/icon-badge.png' %}" alt="Badge" class="inline-icon"
+                            onerror="this.src='https://img.icons8.com/ios-filled/50/5c00e6/approval.png'">
+                        <div>
+                            <span class="status-label">Status:</span><br>
+                            <span class="status-value">Diterima</span>
+                        </div>
+                    </div>
+                </div>
+            
             </div>
 
             <!-- Kartu Detail Titik Jemput -->
+            <!-- Kartu Detail Titik Jemput -->
             <div class="trip-detail-card">
-                <!-- Info lokasi dan tombol Ubah Titik/Buka Peta -->
+            
+                <!-- Ikon Kotak Kiri -->
+                <div class="trip-icon-box">
+                    <!-- Menggunakan fallback ikon dari internet jika gambar lokal belum ada -->
+                    <img src="{% static 'images/icon-mobil.png' %}" alt="Car"
+                        onerror="this.src='https://img.icons8.com/ios-filled/50/5c00e6/car.png'">
+                </div>
+            
+                <!-- Info Teks Tengah -->
+                <div class="trip-info-text">
+                    <h4>Titik Jemput & Waktu</h4>
+                    <p>
+                        <img src="{% static 'images/icon-pin.png' %}" alt="Pin" class="inline-icon"
+                            onerror="this.src='https://img.icons8.com/ios-filled/50/0f766e/marker.png'">
+                        Lobby Gedung A Fasilkom UI • Pkl 16:30 WIB
+                    </p>
+                </div>
+            
+                <!-- Tombol Kanan -->
+                <div class="trip-action-buttons">
+                    <button class="btn-ubah">Ubah Titik</button>
+                    <button class="btn-peta">Buka Peta</button>
+                </div>
+            
             </div>
 
             <!-- Area Riwayat Balon Chat -->
             <div class="chat-history-area">
-                <!-- Balon chat kiri dan kanan -->
+            
+                <!-- Pemisah Tanggal -->
+                <div class="chat-date-separator">
+                    <span>Hari ini, 24 Oktober</span>
+                </div>
+            
+                <!-- Pesan dari Lawan Bicara (Kiri) -->
+                <div class="chat-bubble left">
+                    <img src="{% static 'images/dummy-avatar.png' %}" alt="Rizky" class="chat-bubble-avatar"
+                        onerror="this.src='https://ui-avatars.com/api/?name=Rizky+Pratama&background=f3effc&color=5c00e6'">
+                    <div class="bubble-content">
+                        <p>Halo kak! Jadi nebeng pulang jam setengah lima sore nanti kan?</p>
+                        <span class="bubble-time">10:30</span>
+                    </div>
+                </div>
+            
+                <!-- Pesan dari Diri Sendiri (Kanan) -->
+                <div class="chat-bubble right">
+                    <!-- Avatar diri sendiri (teks "Saya") -->
+                    <img src="{% static 'images/dummy-avatar.png' %}" alt="Saya" class="chat-bubble-avatar"
+                        onerror="this.src='https://ui-avatars.com/api/?name=Saya&background=3a00b3&color=fff'">
+                    <div class="bubble-content">
+                        <p>Hai Rizky! Iya jadi, saya kuliahnya kelar jam 16.00 lewat dikit.</p>
+                        <span class="bubble-time">10:35</span>
+                    </div>
+                </div>
+            
+                <!-- Pesan dari Lawan Bicara (Kiri) lagi -->
+                <div class="chat-bubble left">
+                    <img src="{% static 'images/dummy-avatar.png' %}" alt="Rizky" class="chat-bubble-avatar"
+                        onerror="this.src='https://ui-avatars.com/api/?name=Rizky+Pratama&background=f3effc&color=5c00e6'">
+                    <div class="bubble-content">
+                        <p>Siap bang, saya tunggu di depan lobby gedung A ya!</p>
+                        <span class="bubble-time">10:42</span>
+                    </div>
+                </div>
+            
             </div>
 
             <!-- Area Input Pesan (Terikat di bawah Div 3) -->

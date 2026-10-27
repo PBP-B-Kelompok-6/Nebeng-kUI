@@ -1,0 +1,580 @@
+/* =========================================
+   HALAMAN RESERVASI & CHAT
+   ========================================= */
+
+.reservasi-page {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    padding: 0;
+    /* Padding kiri-kanan diperlebar agar sejajar dengan navbar */
+    width: 100%;
+    max-width: 1150px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    height: calc(100vh - 80px);
+}
+
+/* --- DIV 1: HEADER ATAS --- */
+.reservasi-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    /* Memastikan teks dan tombol rata bawah */
+}
+
+.header-title .subtitle-text {
+    color: #5c00e6;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+.header-title h1 {
+    margin: 8px 0 0 0;
+    font-size: 26px;
+    color: #333;
+}
+
+.btn-buat-tebengan {
+    background-color: #3a00b3;
+    /* Ungu gelap UI */
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 20px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-buat-tebengan:hover {
+    background-color: #2b008a;
+}
+
+/* --- PEMBUNGKUS KIRI & KANAN --- */
+.reservasi-content-wrapper {
+    display: flex;
+    gap: 40px;
+    width: 100%;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* --- DIV 2: SIDEBAR KIRI --- */
+.sidebar-kiri {
+    width: 320px;
+    flex-shrink: 0;
+    background-color: transparent;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 12px 16px 12px 40px;
+    /* Padding kiri lebih besar untuk ikon kaca pembesar */
+    border: none;
+    background-color: #f3effc;
+    border-radius: 12px;
+    outline: none;
+}
+
+.filter-pills {
+    display: flex;
+    justify-content: space-between;
+    /* Membuat jarak antar tombol terbagi rata */
+    gap: 8px;
+}
+
+.filter-pills .pill {
+    padding: 6px 16px;
+    border: none;
+    border-radius: 20px;
+    background-color: #efe8fc;
+    color: #666;
+    cursor: pointer;
+}
+
+.filter-pills .pill.active {
+    background-color: #5c00e6;
+    color: white;
+}
+
+.chat-list {
+    flex: 1;
+    overflow-y: auto;
+    /* Memunculkan scroll hanya pada daftar chat */
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* --- DIV 3: RUANG OBROLAN KANAN --- */
+.ruang-obrolan-kanan {
+    flex: 1;
+    background-color: #f8f6fc;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    padding: 32px;
+    gap: 20px;
+}
+
+.chat-profil-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e0d8f0;
+    padding-bottom: 16px;
+}
+
+.chat-history-area {
+    flex: 1;
+    /* Penting: Mendorong input pesan ke paling bawah */
+    overflow-y: auto;
+    /* Memunculkan scroll khusus untuk balon chat */
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* --- AREA INPUT PESAN BAWAH --- */
+.chat-input-area {
+    background-color: #f3effc;
+    border-radius: 24px;
+    padding: 8px 16px;
+}
+
+.chat-form {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.chat-form input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 8px;
+}
+
+.btn-kirim {
+    background-color: #5c00e6;
+    color: white;
+    border: none;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+.btn-kirim:hover {
+    background-color: #3a00b3;
+}
+
+.btn-kirim img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+/* --- DAFTAR KARTU CHAT --- */
+.chat-card {
+    display: flex;
+    gap: 12px;
+    padding: 16px;
+    border-radius: 12px;
+    background-color: transparent;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    border-left: 4px solid transparent;
+    /* Disiapkan untuk efek aktif */
+}
+
+.chat-card:hover {
+    background-color: #f8f6fc;
+}
+
+/* Efek saat kartu chat sedang dibuka (active) */
+.chat-card.active {
+    background-color: #f3effc;
+    border-left: 4px solid #5c00e6;
+}
+
+/* Bagian Foto Profil */
+.chat-avatar {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    /* Mencegah foto menciut saat teks di kanannya terlalu panjang */
+}
+
+.chat-avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.status-dot {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+}
+
+.status-dot.online {
+    background-color: #10b981;
+}
+
+/* Hijau terang */
+.status-dot.offline {
+    background-color: #9ca3af;
+}
+
+/* Abu-abu */
+
+/* Bagian Informasi Teks */
+.chat-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    min-width: 0;
+    /* SANGAT PENTING: Mengizinkan teks anak di dalamnya dipotong ellipsis */
+}
+
+.chat-info-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chat-info-top h4 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.chat-time {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.chat-info-middle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #4b5563;
+}
+
+/* Trik memotong rute yang kepanjangan menjadi ... */
+.chat-route {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Label Status */
+.badge {
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    flex-shrink: 0;
+    /* Label tidak boleh terlipat/menciut */
+}
+
+.badge-diterima {
+    background-color: #ccfbf1;
+    color: #0f766e;
+}
+
+.badge-menunggu {
+    background-color: #f3f4f6;
+    color: #4b5563;
+}
+
+.badge-selesai {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+/* memotong pesan terakhir menjadi ... */
+.chat-info-bottom p {
+    margin: 0;
+    font-size: 12px;
+    color: #6b7280;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* --- AREA BALON CHAT --- */
+.chat-date-separator {
+    display: flex;
+    justify-content: center;
+    margin: 8px 0 16px 0;
+}
+
+.chat-date-separator span {
+    background-color: #efe8fc;
+    color: #666;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 6px 16px;
+    border-radius: 20px;
+}
+
+.chat-bubble {
+    display: flex;
+    gap: 12px;
+    max-width: 80%;
+    /* Balon tidak boleh terlalu panjang melebar */
+}
+
+.chat-bubble-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    /* Membuat avatar menempel sejajar di bawah balon pesan */
+    align-self: flex-end;
+}
+
+.bubble-content {
+    display: flex;
+    flex-direction: column;
+    padding: 12px 16px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.bubble-content p {
+    margin: 0 0 6px 0;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.bubble-time {
+    font-size: 11px;
+    text-align: right;
+}
+
+/* KONDISI 1: Pesan Lawan Bicara (Kiri) */
+.chat-bubble.left {
+    align-self: flex-start;
+    /* Mendorong keseluruhan grup ke kiri */
+}
+
+.chat-bubble.left .bubble-content {
+    background-color: #ffffff;
+    color: #333;
+    /* Sudut tumpul semua, kecuali ujung kiri bawah dibikin lancip seperti ekor chat */
+    border-radius: 16px 16px 16px 4px;
+}
+
+.chat-bubble.left .bubble-time {
+    color: #9ca3af;
+}
+
+/* KONDISI 2: Pesan Sendiri (Kanan) */
+.chat-bubble.right {
+    align-self: flex-end;
+    /* Mendorong keseluruhan grup ke kanan */
+    flex-direction: row-reverse;
+    /* Trik membalik urutan HTML agar avatar di kanan */
+}
+
+.chat-bubble.right .bubble-content {
+    background-color: #5c00e6;
+    /* Warna ungu UI */
+    color: #ffffff;
+    /* Sudut tumpul semua, kecuali ujung kanan bawah dibikin lancip */
+    border-radius: 16px 16px 4px 16px;
+}
+
+.chat-bubble.right .bubble-time {
+    color: #d9ccff;
+    /* Waktu berwarna ungu muda agar terbaca di latar gelap */
+}
+
+/* --- KARTU DETAIL TITIK JEMPUT --- */
+.trip-detail-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background-color: #ffffff;
+    padding: 16px 24px;
+    border-radius: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    /* Bayangan sangat halus */
+    border: 1px solid #f0eafc;
+}
+
+.trip-icon-box {
+    width: 48px;
+    height: 48px;
+    background-color: #f3effc;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.trip-icon-box img {
+    width: 24px;
+    height: 24px;
+}
+
+.trip-info-text {
+    flex: 1;
+    /* Mendorong tombol aksi ke paling kanan */
+}
+
+.trip-info-text h4 {
+    margin: 0 0 6px 0;
+    font-size: 14px;
+    color: #333;
+}
+
+.trip-info-text p {
+    margin: 0;
+    font-size: 13px;
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.inline-icon {
+    width: 14px;
+    height: 14px;
+}
+
+.trip-action-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+/* Tombol Ubah Titik (Ungu Terang) */
+.btn-ubah {
+    background-color: #efe8fc;
+    color: #5c00e6;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-ubah:hover {
+    background-color: #e2d4f8;
+}
+
+/* Tombol Buka Peta (Hijau Gelap) */
+.btn-peta {
+    background-color: #0f766e;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-peta:hover {
+    background-color: #0d5f58;
+}
+
+/* Kiri: Foto & Teks */
+.profil-header-kiri {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.header-avatar-box {
+    position: relative;
+    width: 48px;
+    height: 48px;
+}
+
+.header-avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.profil-info h3 {
+    margin: 0 0 4px 0;
+    font-size: 18px;
+    color: #1f2937;
+}
+
+.profil-info p {
+    margin: 0;
+    font-size: 13px;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Kanan: Tombol Info & Status */
+.profil-header-kanan {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.btn-info-bulat {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background-color: #f3effc;
+    color: #333;
+    border: none;
+    font-weight: bold;
+    font-family: serif;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.status-badge-besar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: #efe8fc;
+    padding: 8px 16px;
+    border-radius: 12px;
+    color: #5c00e6;
+}
+
+.status-badge-besar .status-label {
+    font-size: 11px;
+    line-height: 1;
+}
+
+.status-badge-besar .status-value {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1;
+}
