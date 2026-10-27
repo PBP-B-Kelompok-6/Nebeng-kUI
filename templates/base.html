@@ -26,10 +26,10 @@
                 <a href="#" class="nav-item">
                     <img src="{% static 'images/icon-forum.png' %}" class="nav-icon"> Forum Tebengan
                 </a>
-                <a href="#" class="nav-item">
+                <a href="{% url 'maps:halaman' %}" class="nav-item {% if request.resolver_match.app_name == 'maps' %}active{% endif %}">
                     <img src="{% static 'images/icon-map.png' %}" class="nav-icon"> Peta Titik Kumpul
                 </a>
-                <a href="#" class="nav-item active">
+                <a href="#" class="nav-item">
                     <img src="{% static 'images/icon-reservasi.png' %}" class="nav-icon"> Reservasi & Chat
                 </a>
                 <a href="#" class="nav-item">
