@@ -32,7 +32,7 @@
                 <a href="#" class="nav-item active">
                     <img src="{% static 'images/icon-reservasi.png' %}" class="nav-icon"> Reservasi & Chat
                 </a>
-                <a href="#" class="nav-item">
+                <a href="{% url 'users:profile' %}" class="nav-item">
                     <img src="{% static 'images/icon-profile2.png' %}" class="nav-icon"> Profil & Reward
                 </a>
             </nav>
@@ -54,7 +54,7 @@
                         {% csrf_token %}
                         <button type="submit" class="btn-nav btn-nav-outline">Logout</button>
                         </form>
-                        <a href="#" class="profile-btn">
+                        <a href="{% url 'users:profile' %}" class="profile-btn">
                             
                         </a>
                     {% else %}

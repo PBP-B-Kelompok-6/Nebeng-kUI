@@ -7,6 +7,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
 
 from users.forms import RegisterForm
 
@@ -50,3 +51,8 @@ def logout_user(request):
     response = redirect(settings.LOGOUT_REDIRECT_URL)
     response.delete_cookie("last_login")
     return response
+
+@login_required
+def profile_view(request):
+    vehicles = request.user.vehicles.all()
+    return render(request, "users/profile.html", {"vehicles": vehicles})
