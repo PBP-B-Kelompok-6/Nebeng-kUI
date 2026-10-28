@@ -14,6 +14,11 @@ class User(AbstractUser):
     profile_picture = models.URLField(blank=True)
     reward_points = models.PositiveIntegerField(default=0)
 
+    def save(self, *args, **kwargs):
+        if not self.profile_picture:
+            self.profile_picture = f"https://ui-avatars.com/api/?name={self.username}&background=5c00e6&color=fff"
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.username
 
