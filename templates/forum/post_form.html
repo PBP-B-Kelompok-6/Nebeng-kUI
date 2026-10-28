@@ -1,17 +1,23 @@
 {% extends 'base.html' %}
-{% block title %}Buat Post - Nebeng-kUI{% endblock title %}
+{% block title %}Tawarkan Tumpangan - Nebeng-kUI{% endblock title %}
 
 {% block content %}
-<h2>Buat Post Tebengan</h2>
-<form method="post" class="post-form">
-    {% csrf_token %}
-    {% for field in form %}
-    <div class="auth-field">
-        {{ field.label_tag }}
-        {{ field }}
-        {% for err in field.errors %}<p class="auth-error">{{ err }}</p>{% endfor %}
-    </div>
-    {% endfor %}
-    <button type="submit" class="btn-auth">Posting</button>
-</form>
+<div class="form-page">
+    <h1>Tawarkan Tumpangan</h1>
+    <p class="forum-sub" style="margin-bottom:20px;">Isi rute dan jumlah kursi yang kosong.</p>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="auth-field">
+            {{ field.label_tag }}
+            {{ field }}
+            {% for err in field.errors %}<p class="auth-error">{{ err }}</p>{% endfor %}
+        </div>
+        {% endfor %}
+        <div class="form-actions">
+            <button type="submit" class="btn-auth">Posting</button>
+            <a href="{% url 'forum:feed' %}" class="btn-cancel">Batal</a>
+        </div>
+    </form>
+</div>
 {% endblock content %}

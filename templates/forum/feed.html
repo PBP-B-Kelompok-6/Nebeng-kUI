@@ -2,29 +2,85 @@
 {% block title %}Forum Tebengan - Nebeng-kUI{% endblock title %}
 
 {% block content %}
-<div class="forum-header">
-    <h2>Forum Tebengan</h2>
-    <a href="{% url 'forum:create' %}" class="btn-nav btn-nav-primary">+ Buat Post</a>
-</div>
+<div class="forum-page">
+    <div class="forum-header">
+        <div>
+            <h1>Forum Tebengan</h1>
+            <p class="forum-sub">Tumpangan yang tersedia menuju dan dari kampus.</p>
+        </div>
+        <a href="{% url 'forum:create' %}" class="btn-small btn-small-primary">+ Tawarkan Tumpangan</a>
+    </div>
 
-<div class="forum-filter">
-    <a href="{% url 'forum:feed' %}">Semua</a>
-    <a href="?tipe=cari">Mencari</a>
-    <a href="?tipe=beri">Memberi</a>
-</div>
-
-{% for post in posts %}
-<div class="post-card">
-    <span class="post-badge post-{{ post.post_type }}">{{ post.get_post_type_display }}</span>
-    <h3>{{ post.pickup_point }} → {{ post.destination }}</h3>
-    <p>{{ post.departure_time|date:"d M Y, H:i" }} · Sisa kursi: {{ post.seats_left }}/{{ post.max_quota }}</p>
-    <p class="post-author">oleh {{ post.author.username }}</p>
-    <a href="{% url 'forum:detail' post.pk %}">Detail</a>
-    {% if post.author == request.user %}
-        <a href="{% url 'forum:delete' post.pk %}">Hapus</a>
+    {% if user.is_authenticated %}
+    <div class="forum-tabs">
+        <a href="{% url 'forum:feed' %}" class="{% if not mine %}active{% endif %}">Semua Tumpangan</a>
+        <a href="?mine=1" class="{% if mine %}active{% endif %}">Post Saya</a>
+    </div>
     {% endif %}
+
+    <div class="ride-grid">
+        {% for post in posts %}
+        <article class="ride-card">
+            <div class="ride-card-top">
+                <div class="ride-author">
+                    <span class="ride-avatar">{{ post.author.username|first|upper }}</span>
+                    <div>
+                        <strong>{{ post.author.username }}</strong>
+                        <small>{{ post.created_at|timesince }} lalu</small>
+                    </div>
+                </div>
+                <span class="seat-pill {% if post.status == 'penuh' %}seat-full{% elif post.seats_left <= 1 %}seat-low{% endif %}">
+                    {% if post.status == 'penuh' %}Penuh{% else %}{{ post.seats_left }} kursi tersisa{% endif %}
+                </span>
+            </div>
+
+            <div class="route">
+                <div class="route-line">
+                    <span class="dot dot-start"></span><span class="line"></span><span class="dot dot-end"></span>
+                </div>
+                <div class="route-text">
+                    <div><small>Titik jemput</small><strong>{{ post.pickup_point }}</strong></div>
+                    <div><small>Tujuan</small><strong>{{ post.destination }}</strong></div>
+                </div>
+            </div>
+
+            <div class="ride-footer">
+                <span class="ride-time">🕒 {{ post.departure_time|date:"D, d M · H:i" }}</span>
+                <div class="ride-actions">
+                    {% if post.author == user %}
+                        <a href="{% url 'forum:detail' post.pk %}" class="btn-small btn-small-outline">
+                            Permintaan
+                            {% if post.pending_count %}<span class="count-badge">{{ post.pending_count }}</span>{% endif %}
+                        </a>
+                        <a href="{% url 'forum:delete' post.pk %}" class="btn-small btn-small-danger">Hapus</a>
+                    {% elif not user.is_authenticated %}
+                        <a href="{% url 'users:login' %}?next={{ request.path }}" class="btn-small btn-small-primary">Nebeng</a>
+                    {% else %}
+                        {% with res=post.my_res.0 %}
+                            {% if res %}
+                                <span class="status-chip status-{{ res.status }}">{{ res.get_status_display }}</span>
+                                {% if res.chat_unlocked %}
+                                    <a href="{% url 'reservasi:show_reservasi' %}?id={{ res.id }}" class="btn-small btn-small-primary">Chat</a>
+                                {% endif %}
+                            {% elif post.status == 'aktif' %}
+                                <form method="post" action="{% url 'reservasi:join' post.pk %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                    <button type="submit" class="btn-small btn-small-primary">Nebeng</button>
+                                </form>
+                            {% else %}
+                                <span class="status-chip status-rejected">Penuh</span>
+                            {% endif %}
+                        {% endwith %}
+                    {% endif %}
+                </div>
+            </div>
+        </article>
+        {% empty %}
+        <div class="vehicle-empty">
+            {% if mine %}Kamu belum punya post.{% else %}Belum ada tumpangan aktif. Jadilah yang pertama menawarkan!{% endif %}
+        </div>
+        {% endfor %}
+    </div>
 </div>
-{% empty %}
-<p>Belum ada tebengan aktif.</p>
-{% endfor %}
 {% endblock content %}

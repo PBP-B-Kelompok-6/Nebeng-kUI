@@ -1,15 +1,8 @@
-from django.db import models
-
-# Create your models here.
 from django.conf import settings
 from django.db import models
 
 
 class RidePost(models.Model):
-    class PostType(models.TextChoices):
-        CARI = "cari", "Mencari Tebengan"
-        BERI = "beri", "Memberi Tebengan"
-
     class Status(models.TextChoices):
         AKTIF = "aktif", "Aktif"
         PENUH = "penuh", "Penuh"
@@ -17,7 +10,6 @@ class RidePost(models.Model):
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="ride_posts"
     )
-    post_type = models.CharField(max_length=10, choices=PostType.choices)
     pickup_point = models.CharField(max_length=200)
     destination = models.CharField(max_length=200)
     departure_time = models.DateTimeField()
@@ -41,4 +33,4 @@ class RidePost(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.get_post_type_display()}: {self.pickup_point} → {self.destination}"
+        return f"{self.pickup_point} → {self.destination}"
