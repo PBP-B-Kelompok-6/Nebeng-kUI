@@ -77,12 +77,18 @@ body {
 }
 
 /* Efek saat menu disorot mouse atau sedang aktif dibuka */
-.nav-item:hover,
-.nav-item.active {
+/* 1. Efek ketika menu disorot / di-hover (ungu pudar, tulisan ungu) */
+.nav-item:hover {
     background-color: #f3f0ff;
-    /* Background ungu muda */
     color: #5c00e6;
-    /* Teks ungu pekat */
+}
+
+/* 2. Efek ketika halaman sedang dipilih / aktif (ungu terang, tulisan tetap hitam) */
+.nav-item.active {
+    background-color: #5c00e6;
+    /* Warna ungu terang */
+    color: #BDC0C0;
+    /* Warna teks hitam/abu gelap bawaan aplikasi */
 }
 
 /* --- KOLOM KANAN (WRAPPER) --- */
