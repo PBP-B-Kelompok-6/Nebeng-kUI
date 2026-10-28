@@ -533,3 +533,224 @@ footer {
         justify-items: start;
     }
 }
+
+/* --- FORM PROFIL & KENDARAAN --- */
+.form-page {
+    max-width: 520px;
+    margin: 0 auto;
+}
+
+.form-page h1 {
+    font-size: 26px;
+    margin-bottom: 6px;
+}
+
+.auth-field select,
+.auth-field textarea {
+    width: 100%;
+    padding: 13px 16px;
+    border: 1.5px solid transparent;
+    border-radius: 12px;
+    background: #f5f3ff;
+    font: inherit;
+    color: #1F2937;
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+.auth-field select:focus,
+.auth-field textarea:focus {
+    outline: none;
+    border-color: #5c00e6;
+    background: #fff;
+}
+
+.auth-field textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+
+.form-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 8px;
+}
+
+.form-actions .btn-auth {
+    width: auto;
+    margin-top: 0;
+    padding: 13px 28px;
+}
+
+.btn-cancel {
+    color: #6b7280;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.btn-cancel:hover {
+    color: #1F2937;
+}
+
+/* --- TOMBOL KECIL --- */
+.btn-small {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    border: 1.5px solid transparent;
+    border-radius: 999px;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-small-primary {
+    background: #5c00e6;
+    color: #fff;
+}
+
+.btn-small-primary:hover {
+    background: #4a00bd;
+}
+
+.btn-small-outline {
+    background: transparent;
+    border-color: #5c00e6;
+    color: #5c00e6;
+}
+
+.btn-small-outline:hover {
+    background: #f3f0ff;
+}
+
+.btn-small-danger {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.btn-small-danger:hover {
+    background: #fecaca;
+}
+
+.profile-main .btn-small {
+    margin-top: 14px;
+}
+
+.vehicle-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.vehicle-actions form {
+    margin: 0;
+}
+
+/* --- MENU AKUN (AVATAR + DROPDOWN) --- */
+.user-menu {
+    position: relative;
+}
+
+.nav-avatar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 2px solid #ede9fe;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #5c00e6;
+    color: #fff;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.nav-avatar:hover,
+.nav-avatar[aria-expanded="true"] {
+    border-color: #5c00e6;
+}
+
+.nav-avatar img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.user-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    z-index: 50;
+    min-width: 220px;
+    padding: 8px;
+    border: 1px solid #eaeaea;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 10px 30px rgba(92, 0, 230, 0.12);
+}
+
+.user-dropdown[hidden] {
+    display: none;
+}
+
+.user-dropdown-head {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 12px 12px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.user-dropdown-head strong {
+    font-size: 14px;
+    word-break: break-word;
+}
+
+.user-dropdown-head span {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.user-dropdown form {
+    margin: 0;
+}
+
+.user-dropdown-item {
+    display: block;
+    width: 100%;
+    padding: 10px 12px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    color: #1F2937;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.user-dropdown-item:hover {
+    background: #f3f0ff;
+    color: #5c00e6;
+}
+
+.user-dropdown-logout {
+    color: #b91c1c;
+}
+
+.user-dropdown-logout:hover {
+    background: #fee2e2;
+    color: #b91c1c;
+}

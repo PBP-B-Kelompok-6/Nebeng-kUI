@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="profile-page">
+    {% for message in messages %}
+        <div class="auth-message">{{ message }}</div>
+    {% endfor %}
 
   <section class="profile-card">
     <div class="profile-avatar">
@@ -20,6 +23,7 @@
       {% if user.bio %}
         <p class="profile-bio">{{ user.bio }}</p>
       {% endif %}
+      <a href="{% url 'users:profile_edit' %}" class="btn-small btn-small-outline">Edit Profil</a>
     </div>
 
     <dl class="profile-stats">
@@ -41,7 +45,7 @@
   <section class="vehicle-section">
     <div class="section-head">
       <h2>Kendaraan Terdaftar</h2>
-      {# TODO CRUD: tombol "Tambah Kendaraan" di sini #}
+      <a href="{% url 'users:vehicle_add' %}" class="btn-small btn-small-primary">+ Tambah Kendaraan</a>
     </div>
 
     {% if vehicles %}
@@ -54,8 +58,15 @@
             <h3>{{ vehicle.name }}</h3>
             <p class="vehicle-plate">{{ vehicle.plate_number }}</p>
             <p class="vehicle-meta">Kapasitas: {{ vehicle.capacity }} kursi</p>
+            <div class="vehicle-actions">
+                <a href="{% url 'users:vehicle_edit' vehicle.pk %}" class="btn-small btn-small-outline">Edit</a>
+                <form method="post" action="{% url 'users:vehicle_delete' vehicle.pk %}"
+                        onsubmit="return confirm('Hapus kendaraan ini?');">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-small btn-small-danger">Hapus</button>
+                </form>
+            </div>
           </div>
-          {# TODO CRUD: tombol "Edit Detail" dan "Hapus" di sini #}
         </article>
         {% endfor %}
       </div>

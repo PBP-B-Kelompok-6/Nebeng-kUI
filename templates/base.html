@@ -49,14 +49,29 @@
                 </div>
                 <div class="nav-actions">
                     {% if user.is_authenticated %}
-                        <span class="nav-username">{{ user.username }}</span>
-                        <form method="post" action="{% url 'users:logout' %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn-nav btn-nav-outline">Logout</button>
-                        </form>
-                        <a href="{% url 'users:profile' %}" class="profile-btn">
-                            
-                        </a>
+                        <div class="user-menu" id="user-menu">
+                            <button type="button" class="nav-avatar" id="user-menu-btn"
+                                    aria-haspopup="true" aria-expanded="false" aria-label="Menu akun">
+                                <span class="nav-avatar-initial">{{ user.username|first|upper }}</span>
+                                {% if user.profile_picture %}
+                                    <img src="{{ user.profile_picture }}" alt=""
+                                         onerror="this.style.display='none'">
+                                {% endif %}
+                            </button>
+
+                            <div class="user-dropdown" id="user-dropdown" hidden>
+                                <div class="user-dropdown-head">
+                                    <strong>{{ user.get_full_name|default:user.username }}</strong>
+                                    <span>@{{ user.username }}</span>
+                                </div>
+                                <a href="{% url 'users:profile' %}" class="user-dropdown-item">Profil Saya</a>
+                                <a href="{% url 'users:profile_edit' %}" class="user-dropdown-item">Edit Profil</a>
+                                <form method="post" action="{% url 'users:logout' %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="user-dropdown-item user-dropdown-logout">Logout</button>
+                                </form>
+                            </div>
+                        </div>
                     {% else %}
                         <a href="{% url 'users:login' %}" class="btn-nav btn-nav-outline">Login</a>
                         <a href="{% url 'users:register' %}" class="btn-nav btn-nav-primary">Register</a>
@@ -72,5 +87,28 @@
 
         </div>
     </div>
+    <script>
+  (function () {
+    var menu = document.getElementById("user-menu");
+    if (!menu) return;
+    var btn = document.getElementById("user-menu-btn");
+    var panel = document.getElementById("user-dropdown");
+
+    function setOpen(open) {
+      panel.hidden = !open;
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+
+    btn.addEventListener("click", function () {
+      setOpen(panel.hidden);
+    });
+    document.addEventListener("click", function (e) {
+      if (!menu.contains(e.target)) setOpen(false);
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") setOpen(false);
+    });
+  })();
+</script>
 </body>
 </html>
