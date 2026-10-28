@@ -3,9 +3,311 @@
 
 {% block title %}Reservasi & Chat - Nebeng-kUI{% endblock title %}
 
+{% block meta %}
+<!-- CSS Khusus Modul Reservasi dipanggil hanya saat halaman ini dibuka -->
+<link rel="stylesheet" href="{% static 'css/reservasi.css' %}">
+{% endblock meta %}
+
 {% block content %}
-<div class="chat-container">
-    <h1>Halaman Reservasi & Chat</h1>
-    <p>Area ini siap untuk di-styling dengan 3 div utama.</p>
+<div class="reservasi-page">
+
+    <!-- DIV 1: Bagian Atas (Header & Tombol) -->
+    <div class="reservasi-header">
+        <div class="header-title">
+            <span class="subtitle-text">RESERVASI & OBROLAN</span>
+            <h1>Kelola Perjalanan & Chat</h1>
+        </div>
+        <button class="btn-buat-tebengan">
+            <img src="{% static 'images/icon-forum-active.png' %}"> Buat Tebengan Baru
+        </button>
+    </div>
+
+    <!-- Pembungkus untuk membelah Kiri (Div 2) dan Kanan (Div 3) -->
+    <div class="reservasi-content-wrapper">
+
+        <!-- DIV 2: Elemen Sebelah Kiri (Search, Filter, List Chat) -->
+        <div class="sidebar-kiri">
+            <div class="search-bar">
+                <input type="text" placeholder="Cari nama driver atau rute...">
+            </div>
+            <div class="filter-pills">
+                <button class="pill active">Semua</button>
+                <button class="pill">Menunggu</button>
+                <button class="pill">Diterima</button>
+                <button class="pill">Selesai</button>
+            </div>
+            <div class="chat-list">
+            
+                {% for res in daftar_reservasi %}
+                <div class="chat-card {% if res == reservasi_aktif %}active{% endif %}">
+            
+                    <div class="chat-avatar">
+                        <img src="{{ res.penumpang.profile_picture }}" alt="{{ res.penumpang.username }}">
+                        <span class="status-dot online"></span>
+                    </div>
+            
+                    <div class="chat-info">
+                        <div class="chat-info-top">
+                            <h4>{{ res.penumpang.username }}</h4>
+                            <span class="chat-time">
+                                {% with last_msg=res.pesan_list.last %}
+                                {% if last_msg %}{{ last_msg.timestamp|date:"H:i" }}{% endif %}
+                                {% endwith %}
+                            </span>
+                        </div>
+            
+                        <div class="chat-info-middle">
+                            <span class="chat-badge chat-badge-{{ res.status|lower }}">{{ res.get_status_display }}</span>
+                            <!-- <span class="chat-route">{{ res.tebengan.lokasi_awal }} &rarr; {{ res.tebengan.lokasi_tujuan }}</span> -->
+                        </div>
+            
+                        <div class="chat-info-bottom">
+                            <p>
+                                {% with last_msg=res.pesan_list.last %}
+                                {% if last_msg %}
+                                {{ last_msg.teks }}
+                                {% else %}
+                                Belum ada pesan.
+                                {% endif %}
+                                {% endwith %}
+                            </p>
+                        </div>
+                    </div>
+            
+                </div>
+                {% empty %}
+                <!-- Inline style dihapus dan diganti dengan class eksternal -->
+                <div class="chat-empty-state">
+                    Belum ada riwayat tebengan.
+                </div>
+                {% endfor %}
+            
+            </div>
+        </div>
+
+        <!-- DIV 3: Elemen Sebelah Kanan (Header Info, Detail Trip, Chat, Input) -->
+        <div class="ruang-obrolan-kanan">
+            {% if reservasi_aktif %}
+                <!-- Info Profil & Status di atas -->
+                <div class="chat-profil-header">
+                
+                    <!-- Bagian Kiri: Foto dan Info -->
+                    <div class="profil-header-kiri">
+                        <div class="header-avatar-box">
+                            <img src="{{ reservasi_aktif.penumpang.profile_picture }}" alt="{{ reservasi_aktif.penumpang.username }}"
+                                class="header-avatar">
+                            <span class="status-dot online"></span>
+                        </div>
+                        <div class="profil-info">
+                            <h3>{{ reservasi_aktif.penumpang.username }}</h3>
+                            <p>
+                                <!-- Ikon mobil kecil di sebelah teks EV Commuter -->
+                                <img src="{% static 'images/icon-car-green.png' %}" alt="Car" class="inline-icon"
+                                    onerror="this.src='https://img.icons8.com/ios-filled/50/4b5563/car.png'">
+                                EV Commuter • Fasilkom UI &rarr; Stasiun Pondok Cina
+                            </p>
+                        </div>
+                    </div>
+                
+                    <!-- Bagian Kanan: Tombol Info & Status -->
+                    <div class="profil-header-kanan">
+                        <button class="btn-info-bulat">i</button>
+                        <div class="status-badge-besar">
+                            <img src="{% static 'images/icon-badge.png' %}" alt="Badge" class="inline-icon"
+                                onerror="this.src='https://img.icons8.com/ios-filled/50/5c00e6/approval.png'">
+                            <div>
+                                <span class="status-label">Status:</span><br>
+                                <span class="status-value">{{ reservasi_aktif.get_status_display }}</span>
+                            </div>
+                        </div>
+                    </div>
+                
+                </div>
+
+                <!-- Kartu Detail Titik Jemput -->
+                <!-- Kartu Detail Titik Jemput -->
+                <div class="trip-detail-card">
+                
+                    <!-- Ikon Kotak Kiri -->
+                    <div class="trip-icon-box">
+                        <!-- Menggunakan fallback ikon dari internet jika gambar lokal belum ada -->
+                        <img src="{% static 'images/icon-mobil.png' %}" alt="Car">
+                    </div>
+                
+                    <!-- Info Teks Tengah -->
+                    <div class="trip-info-text">
+                        <h4>Titik Jemput & Waktu</h4>
+                        <p>
+                            <img src="{% static 'images/icon-pin.png' %}" alt="Pin" class="inline-icon">
+                            {{ reservasi_aktif.titik_jemput }} • Pkl {{ reservasi_aktif.waktu_jemput|date:"H:i" }} WIB
+                        </p>
+                    </div>
+                
+                    <!-- Tombol Kanan -->
+                    <div class="trip-action-buttons">
+                        <button class="btn-ubah">Ubah Titik</button>
+                        <button class="btn-peta">Buka Peta</button>
+                    </div>
+                
+                </div>
+
+                <!-- Area Riwayat Balon Chat -->
+                <div class="chat-history-area">
+                
+                    {% for pesan in pesan_aktif %}
+                
+                    <!-- PEMISAH TANGGAL DINAMIS -->
+                    {% ifchanged pesan.timestamp.date %}
+                    <div class="chat-date-separator">
+                        <!-- Menampilkan format seperti: 24 Oktober -->
+                        <span>{{ pesan.timestamp|date:"d F" }}</span>
+                    </div>
+                    {% endifchanged %}
+                
+                    <!-- Cek apakah pesan dikirim oleh user yang sedang login -->
+                    {% if pesan.pengirim == request.user %}
+                    <!-- Pesan Sendiri (Kanan) -->
+                    <div class="chat-bubble right">
+                        <div class="bubble-content">
+                            <p>{{ pesan.teks }}</p>
+                    
+                            <div class="bubble-meta">
+                                <span class="bubble-time">{{ pesan.timestamp|date:"H:i" }}</span>
+                    
+                                {% if forloop.last %}
+                                <div class="bubble-actions">
+                                    <button type="button" class="btn-chat-action" data-url="{% url 'reservasi:edit_pesan' pesan.id %}"
+                                        data-teks="{{ pesan.teks }}" onclick="openEditModal(this)">
+                                        Edit
+                                    </button>
+                    
+                                    <button type="button" class="btn-chat-action hapus" data-url="{% url 'reservasi:hapus_pesan' pesan.id %}"
+                                        onclick="openUnsendModal(this)">
+                                        Unsend
+                                    </button>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <img src="{{ pesan.pengirim.profile_picture }}" alt="{{ pesan.pengirim.username }}" class="chat-bubble-avatar">
+                    </div>
+
+                    <!-- MODAL KUSTOM EDIT PESAN -->
+                    <div id="modal-edit-pesan" class="modal-overlay" style="display: none;">
+                        <div class="modal-card">
+                            <h3>Edit Pesan</h3>
+                            <form id="form-edit-modal" method="POST">
+                                {% csrf_token %}
+                                <textarea name="teks_pesan_baru" id="modal-teks-input" rows="3" required></textarea>
+                                <div class="modal-actions">
+                                    <button type="button" class="btn-modal-cancel" onclick="closeEditModal()">Batal</button>
+                                    <button type="submit" class="btn-modal-save">Simpan Perubahan</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- MODAL KUSTOM UNSEND PESAN -->
+                    <div id="modal-unsend-pesan" class="modal-overlay" style="display: none;">
+                        <div class="modal-card">
+                            <h3>Unsend Pesan?</h3>
+                            <p class="modal-description">Pesan ini akan dihapus secara permanen dari percakapan.</p>
+                            <form id="form-unsend-modal" method="POST">
+                                {% csrf_token %}
+                                <div class="modal-actions">
+                                    <button type="button" class="btn-modal-cancel" onclick="closeUnsendModal()">Batal</button>
+                                    <button type="submit" class="btn-modal-danger">Hapus</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                
+                    {% else %}
+                    <!-- Pesan Lawan Bicara (Kiri) -->
+                    <div class="chat-bubble left">
+                        <img src="{{ pesan.pengirim.profile_picture }}" alt="{{ pesan.pengirim.username }}" class="chat-bubble-avatar">
+                        <div class="bubble-content">
+                            <p>{{ pesan.teks }}</p>
+                            <span class="bubble-time">{{ pesan.timestamp|date:"H:i" }}</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                
+                    {% empty %}
+                    <div class="chat-date-separator">
+                        <span>Belum ada pesan. Mulai obrolan!</span>
+                    </div>
+                    {% endfor %}
+                
+                </div>
+
+                <!-- Area Input Pesan (Terikat di bawah Div 3) -->
+                <div class="chat-input-area">
+                    <form class="chat-form" method="POST" action="{% url 'reservasi:kirim_pesan' reservasi_aktif.id %}">
+                        {% csrf_token %}
+                        <!-- Pastikan input ini punya atribut name="teks_pesan" -->
+                        <input type="text" name="teks_pesan" placeholder="Ketik pesan..." required autocomplete="off">
+                        <button type="submit" class="btn-kirim">
+                            <img src="{% static 'images/icon-kirim.png' %}" alt="Kirim">
+                        </button>
+                    </form>
+                </div>
+            {% else %}
+            
+            <!-- TAMPILAN KOSONG SAAT DATABASE KOSONG / BELUM ADA CHAT -->
+            <div class="chat-empty-wrapper">
+                <h3>Belum Ada Percakapan</h3>
+                <p>Pilih atau buat reservasi baru untuk memulai obrolan.</p>
+            </div>
+            
+            {% endif %}
+
+        </div>
+
+    </div>
 </div>
+<script>
+    function openEditModal(tombol) {
+        let url = tombol.getAttribute('data-url');
+        let teks = tombol.getAttribute('data-teks');
+
+        document.getElementById('form-edit-modal').action = url;
+        document.getElementById('modal-teks-input').value = teks;
+        document.getElementById('modal-edit-pesan').style.display = 'flex';
+        document.getElementById('modal-teks-input').focus();
+    }
+
+    function closeEditModal() {
+        document.getElementById('modal-edit-pesan').style.display = 'none';
+    }
+
+    
+    /* Modal Unsend */
+    function openUnsendModal(tombol) {
+        let url = tombol.getAttribute('data-url');
+        document.getElementById('form-unsend-modal').action = url;
+        document.getElementById('modal-unsend-pesan').style.display = 'flex';
+    }
+
+    function closeUnsendModal() {
+        document.getElementById('modal-unsend-pesan').style.display = 'none';
+    }
+
+    /* Tutup modal saat area luar diklik */
+    window.onclick = function(event) {
+        let modalEdit = document.getElementById('modal-edit-pesan');
+        let modalUnsend = document.getElementById('modal-unsend-pesan');
+        
+        if (event.target === modalEdit) closeEditModal();
+        if (event.target === modalUnsend) closeUnsendModal();
+    }
+
+    // Otomatis scroll ke pesan paling bawah setelah halaman di-load/refresh
+    document.addEventListener("DOMContentLoaded", function () {
+            const chatHistory = document.querySelector('.chat-history-area');
+            if (chatHistory) {
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+            }
+        });
+</script>
 {% endblock content %}
