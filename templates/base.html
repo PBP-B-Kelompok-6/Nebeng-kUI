@@ -39,8 +39,9 @@
                     <img src="{% static 'images/icon-reservasi-active.png' %}" class="nav-icon icon-active">
                     Reservasi & Chat
                 </a>
-                <a href="#" class="nav-item {% if '/profil/' in request.path %}active{% endif %}"">
-                    <img src="{% static 'images/icon-profile2.png' %}" class="nav-icon"> Profil & Reward
+                <a href="{% url 'users:profile' %}" class="nav-item {% if '/profile/' in request.path %}active{% endif %}"">
+                    <img src="{% static 'images/icon-profile2.png' %}" class="nav-icon icon-default">
+                    <img src="{% static 'images/icon-profile2-active.png' %}" class="nav-icon icon-active">Profil & Reward
                 </a>
             </nav>
         </aside>

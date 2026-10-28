@@ -272,46 +272,6 @@
     color: #6b7280;
 }
 
-.chat-info-middle {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    color: #4b5563;
-}
-
-/* Trik memotong rute yang kepanjangan menjadi ... */
-.chat-route {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-/* Label Status */
-.badge {
-    padding: 2px 8px;
-    border-radius: 6px;
-    font-size: 11px;
-    font-weight: 600;
-    flex-shrink: 0;
-    /* Label tidak boleh terlipat/menciut */
-}
-
-.badge-diterima {
-    background-color: #ccfbf1;
-    color: #0f766e;
-}
-
-.badge-menunggu {
-    background-color: #f3f4f6;
-    color: #4b5563;
-}
-
-.badge-selesai {
-    background-color: #dcfce7;
-    color: #166534;
-}
-
 /* memotong pesan terakhir menjadi ... */
 .chat-info-bottom p {
     margin: 0;
@@ -577,4 +537,233 @@
     font-size: 14px;
     font-weight: 600;
     line-height: 1;
+}
+
+/* Mengatur agar badge dan rute sejajar horizontal */
+.chat-info-middle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 4px 0;
+}
+
+/* Mengganti nama menjadi chat-badge agar tidak bentrok dengan Bootstrap */
+.chat-badge {
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.2;
+    display: inline-block;
+    white-space: nowrap;
+}
+
+/* Warna spesifik */
+.chat-badge-menunggu {
+    background-color: #F2EBFA;
+    color: #4b5563;
+}
+
+.chat-badge-diterima {
+    background-color: #ccfbf1;
+    /* Sedikit lebih cyan/hijau agar segar */
+    color: #0f766e;
+}
+
+.chat-badge-selesai {
+    background-color: #e5e7eb;
+    color: #374151;
+}
+/* --- ALIGNMENT TOMBOL EDIT & UNSEND --- */
+.bubble-meta {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.bubble-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-left: 1px solid rgba(255, 255, 255, 0.3);
+    padding-left: 8px;
+}
+
+/* Mereset form di dalam bubble action agar sejajar presisi */
+.bubble-actions form {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+
+.btn-chat-action {
+    background: transparent;
+    border: none;
+    color: #d9ccff;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+}
+
+.btn-chat-action:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+.btn-chat-action.hapus:hover {
+    color: #fca5a5;
+}
+
+/* --- MODAL UI KUSTOM (TEMA UNGU) --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(3px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.modal-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    animation: fadeInModal 0.2s ease-out;
+}
+
+.modal-card h3 {
+    margin: 0 0 12px 0;
+    font-size: 18px;
+    color: #1f2937;
+}
+
+.modal-card textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 14px;
+    outline: none;
+    resize: none;
+    box-sizing: border-box;
+    background-color: #f9fafb;
+    font-family: inherit;
+    transition: border-color 0.2s;
+}
+
+.modal-card textarea:focus {
+    border-color: #5c00e6;
+    background-color: #ffffff;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.btn-modal-cancel {
+    background: #f3f4f6;
+    color: #4b5563;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-modal-cancel:hover {
+    background: #e5e7eb;
+}
+
+.btn-modal-save {
+    background: #5c00e6;
+    color: #ffffff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-modal-save:hover {
+    background: #3a00b3;
+}
+
+@keyframes fadeInModal {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.modal-card p.modal-description {
+    margin: 0 0 16px 0;
+    font-size: 14px;
+    color: #6b7280;
+    line-height: 1.4;
+}
+
+.btn-modal-danger {
+    background: #ef4444;
+    color: #ffffff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-modal-danger:hover {
+    background: #dc2626;
+}
+
+/* Tampilan khusus ketika tidak ada reservasi yang dipilih / database kosong */
+.chat-empty-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    color: #6b7280;
+    text-align: center;
+}
+
+.chat-empty-wrapper h3 {
+    margin: 0 0 8px 0;
+    font-size: 18px;
+    color: #374151;
+}
+
+.chat-empty-wrapper p {
+    margin: 0;
+    font-size: 14px;
 }
