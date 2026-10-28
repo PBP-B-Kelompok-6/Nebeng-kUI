@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="form-page">
+  <h1>{{ title }}</h1>
+  <p class="auth-subtitle">{{ subtitle }}</p>
+
+  <form method="post">
+    {% csrf_token %}
+
+    {% for error in form.non_field_errors %}
+      <p class="auth-error">{{ error }}</p>
+    {% endfor %}
+
+    {% for field in form %}
+      <div class="auth-field">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.help_text %}
+          <div class="auth-help">{{ field.help_text }}</div>
+        {% endif %}
+        {% for error in field.errors %}
+          <p class="auth-error">{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endfor %}
+
+    <div class="form-actions">
+      <button type="submit" class="btn-auth">{{ submit_label }}</button>
+      <a href="{% url 'users:profile' %}" class="btn-cancel">Batal</a>
+    </div>
+  </form>
+</div>
+{% endblock content %}

@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="profile-page">
+    {% for message in messages %}
+        <div class="auth-message">{{ message }}</div>
+    {% endfor %}
+
+  <section class="profile-card">
+    <div class="profile-avatar">
+      {% if user.profile_picture %}
+        <img src="{{ user.profile_picture }}" alt="Foto {{ user.username }}">
+      {% else %}
+        <span>{{ user.username|first|upper }}</span>
+      {% endif %}
+    </div>
+
+    <div class="profile-main">
+      {% if user.faculty %}
+        <span class="profile-badge">{{ user.faculty }}</span>
+      {% endif %}
+      <h1>{{ user.get_full_name|default:user.username }}</h1>
+      <p class="profile-sub">NPM: {{ user.npm|default:"-" }}</p>
+      {% if user.bio %}
+        <p class="profile-bio">{{ user.bio }}</p>
+      {% endif %}
+      <a href="{% url 'users:profile_edit' %}" class="btn-small btn-small-outline">Edit Profil</a>
+    </div>
+
+    <dl class="profile-stats">
+      <div class="profile-stat">
+        <dt>Status akun</dt>
+        <dd class="stat-ok">Aktif</dd>
+      </div>
+      <div class="profile-stat">
+        <dt>Peran</dt>
+        <dd>{% if user.is_driver %}Pemberi &amp; pencari tebengan{% else %}Pencari tebengan{% endif %}</dd>
+      </div>
+      <div class="profile-stat">
+        <dt>Bergabung</dt>
+        <dd>{{ user.date_joined|date:"d M Y" }}</dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="vehicle-section">
+    <div class="section-head">
+      <h2>Kendaraan Terdaftar</h2>
+      <a href="{% url 'users:vehicle_add' %}" class="btn-small btn-small-primary">+ Tambah Kendaraan</a>
+    </div>
+
+    {% if vehicles %}
+      <div class="vehicle-grid">
+        {% for vehicle in vehicles %}
+        <article class="vehicle-card">
+          <div class="vehicle-icon">{% if vehicle.vehicle_type == "motor" %}🏍️{% else %}🚗{% endif %}</div>
+          <div class="vehicle-info">
+            <span class="vehicle-label">{{ vehicle.get_vehicle_type_display }}</span>
+            <h3>{{ vehicle.name }}</h3>
+            <p class="vehicle-plate">{{ vehicle.plate_number }}</p>
+            <p class="vehicle-meta">Kapasitas: {{ vehicle.capacity }} kursi</p>
+            <div class="vehicle-actions">
+                <a href="{% url 'users:vehicle_edit' vehicle.pk %}" class="btn-small btn-small-outline">Edit</a>
+                <form method="post" action="{% url 'users:vehicle_delete' vehicle.pk %}"
+                        onsubmit="return confirm('Hapus kendaraan ini?');">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-small btn-small-danger">Hapus</button>
+                </form>
+            </div>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="vehicle-empty">
+        <p>Belum ada kendaraan yang terdaftar.</p>
+      </div>
+    {% endif %}
+  </section>
+
+</div>
+{% endblock content %}
