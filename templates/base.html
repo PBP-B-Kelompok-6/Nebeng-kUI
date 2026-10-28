@@ -52,11 +52,10 @@
                         <div class="user-menu" id="user-menu">
                             <button type="button" class="nav-avatar" id="user-menu-btn"
                                     aria-haspopup="true" aria-expanded="false" aria-label="Menu akun">
-                                <span class="nav-avatar-initial">{{ user.username|first|upper }}</span>
-                                {% if user.profile_picture %}
+                                    <!-- harus diubah -->
+                                <span class="nav-avatar-initial"></span>
                                     <img src="{{ user.profile_picture }}" alt=""
                                          onerror="this.style.display='none'">
-                                {% endif %}
                             </button>
 
                             <div class="user-dropdown" id="user-dropdown" hidden>
