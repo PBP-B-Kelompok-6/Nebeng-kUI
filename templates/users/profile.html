@@ -7,11 +7,7 @@
 
   <section class="profile-card">
     <div class="profile-avatar">
-      {% if user.profile_picture %}
         <img src="{{ user.profile_picture }}" alt="Foto {{ user.username }}">
-      {% else %}
-        <span>{{ user.username|first|upper }}</span>
-      {% endif %}
     </div>
 
     <div class="profile-main">
