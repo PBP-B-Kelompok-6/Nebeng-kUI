@@ -26,7 +26,7 @@
                 <a href="forum" class="nav-item" {% if '/forum/' in request.path %}active{% endif %}>
                     <img src="{% static 'images/icon-forum.png' %}" class="nav-icon"> Forum Tebengan
                 </a>
-                <a href="peta" class="nav-item" {% if '/peta/' in request.path %}active{% endif %}>
+                <a href="{% url 'maps:halaman' %}" class="nav-item {% if '/maps/' in request.path %}active{% endif %}">
                     <img src="{% static 'images/icon-map.png' %}" class="nav-icon"> Peta Titik Kumpul
                 </a>
                 <a href="reservasi" class="nav-item" {% if '/reservasi/' in request.path %}active{% endif %}>

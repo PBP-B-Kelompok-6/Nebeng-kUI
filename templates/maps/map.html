@@ -108,7 +108,6 @@
   let semuaTitik = [];
   let posisiUser = null;          // [lat, lon]
   let filterKategori = "";        // "" = semua
-  let hanyaEV = false;
   let kataKunci = "";
   let terpilih = null;
   const markers = new Map();      // id -> marker
@@ -141,7 +140,6 @@
 
   function titikTersaring() {
     return semuaTitik.filter((t) => {
-      if (hanyaEV && t.kategori !== "ev") return false;
       if (filterKategori && !filterKategori.split(",").includes(t.kategori)) return false;
       if (kataKunci && !t.nama.toLowerCase().includes(kataKunci)) return false;
       return true;
@@ -193,8 +191,6 @@
   }
 
   function renderStatistik() {
-    $("stat-halte").textContent = `${semuaTitik.filter((t) => t.kategori === "halte").length} Aktif`;
-    $("stat-ev").textContent = `${semuaTitik.filter((t) => t.kategori === "ev").length} Titik`;
     $("stat-favorit").textContent = `${favorit.size} Tersimpan`;
   }
 
@@ -243,12 +239,6 @@
 
   $("cari-titik").addEventListener("input", (e) => {
     kataKunci = e.target.value.trim().toLowerCase();
-    render();
-  });
-
-  $("btn-filter-ev").addEventListener("click", (e) => {
-    hanyaEV = !hanyaEV;
-    e.currentTarget.classList.toggle("aktif", hanyaEV);
     render();
   });
 

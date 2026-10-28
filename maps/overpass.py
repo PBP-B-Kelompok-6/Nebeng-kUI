@@ -2,11 +2,17 @@
 Service untuk mengambil titik strategis di kampus UI Depok dari Overpass API.
 """
 import math
+import time
 
 import requests
 from django.core.cache import cache
 
-OVERPASS_URL = "https://overpass-api.de/api/interpreter"
+OVERPASS_URL = [
+    "https://overpass-api.de/api/interpreter",
+    "https://overpass.kumi.systems/api/interpreter",
+    "https://overpass.private.coffee/api/interpreter",
+    ]
+
 CACHE_KEY = "peta_titik_ui_v1"
 CACHE_TTL = 60 * 60 * 6  # 6 jam, supaya tidak membebani Overpass
 
@@ -100,6 +106,25 @@ def _normalisasi(el):
     }
 
 
+def _panggil_overpass(query):
+    """Coba tiap server secara berurutan sampai ada yang berhasil."""
+    for url in OVERPASS_URL:
+        for percobaan in range(2):
+            try:
+                resp = requests.post(
+                    url,
+                    data={"data": query},
+                    headers={"User-Agent": "Nebeng-kUI/1.0 (tugas kuliah)"},
+                    timeout=40,
+                )
+                resp.raise_for_status()
+                return resp.json().get("elements", [])
+            except (requests.RequestException, ValueError) as err:
+                print(f"OVERPASS GAGAL [{url}] percobaan {percobaan + 1}:", repr(err))
+                time.sleep(2)
+    return None  # semua server gagal
+
+
 def ambil_titik_ui(paksa_refresh=False):
     """Ambil daftar titik strategis UI (dengan cache)."""
     if not paksa_refresh:
@@ -108,30 +133,20 @@ def ambil_titik_ui(paksa_refresh=False):
             return data
 
     s, w, n, e = BBOX
-    try:
-        resp = requests.post(
-            OVERPASS_URL,
-            data={"data": QUERY.format(s=s, w=w, n=n, e=e)},
-            headers={"User-Agent": "Nebeng-kUI/1.0 (tugas kuliah)"},
-            timeout=30,
-        )
-        resp.raise_for_status()
-        elemen = resp.json().get("elements", [])
-    except (requests.RequestException, ValueError):
-        # kalau Overpass sedang down, pakai cache lama bila ada
+    elemen = _panggil_overpass(QUERY.format(s=s, w=w, n=n, e=e))
+    if elemen is None:
         return cache.get(CACHE_KEY, [])
 
     hasil, terlihat = [], set()
     for el in elemen:
         item = _normalisasi(el)
-        # buang duplikat (nama + kategori sama) agar daftar tidak berulang
         if item and (item["nama"], item["kategori"]) not in terlihat:
             terlihat.add((item["nama"], item["kategori"]))
             hasil.append(item)
 
-    cache.set(CACHE_KEY, hasil, CACHE_TTL)
+    if hasil:  # jangan cache hasil kosong
+        cache.set(CACHE_KEY, hasil, CACHE_TTL)
     return hasil
-
 
 def tambah_jarak(titik, lat, lon):
     """Tambahkan field jarak_m dan urutkan dari yang terdekat."""
