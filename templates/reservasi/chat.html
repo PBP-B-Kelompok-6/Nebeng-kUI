@@ -95,12 +95,12 @@
                 <!-- Bagian Kiri: Foto dan Info -->
                 <div class="profil-header-kiri">
                     <div class="header-avatar-box">
-                        <img src="{% static 'images/dummy-avatar.png' %}" alt="Rizky" class="header-avatar"
-                            onerror="this.src='https://ui-avatars.com/api/?name=Rizky+Pratama&background=f3effc&color=5c00e6'">
+                        <img src="{{ reservasi_aktif.penumpang.profile_picture }}" alt="{{ reservasi_aktif.penumpang.username }}"
+                            class="header-avatar">
                         <span class="status-dot online"></span>
                     </div>
                     <div class="profil-info">
-                        <h3>Rizky Pratama</h3>
+                        <h3>{{ reservasi_aktif.penumpang.username }}</h3>
                         <p>
                             <!-- Ikon mobil kecil di sebelah teks EV Commuter -->
                             <img src="{% static 'images/icon-car-green.png' %}" alt="Car" class="inline-icon"
@@ -118,7 +118,7 @@
                             onerror="this.src='https://img.icons8.com/ios-filled/50/5c00e6/approval.png'">
                         <div>
                             <span class="status-label">Status:</span><br>
-                            <span class="status-value">Diterima</span>
+                            <span class="status-value">{{ reservasi_aktif.get_status_display }}</span>
                         </div>
                     </div>
                 </div>
@@ -132,17 +132,15 @@
                 <!-- Ikon Kotak Kiri -->
                 <div class="trip-icon-box">
                     <!-- Menggunakan fallback ikon dari internet jika gambar lokal belum ada -->
-                    <img src="{% static 'images/icon-mobil.png' %}" alt="Car"
-                        onerror="this.src='https://img.icons8.com/ios-filled/50/5c00e6/car.png'">
+                    <img src="{% static 'images/icon-mobil.png' %}" alt="Car">
                 </div>
             
                 <!-- Info Teks Tengah -->
                 <div class="trip-info-text">
                     <h4>Titik Jemput & Waktu</h4>
                     <p>
-                        <img src="{% static 'images/icon-pin.png' %}" alt="Pin" class="inline-icon"
-                            onerror="this.src='https://img.icons8.com/ios-filled/50/0f766e/marker.png'">
-                        Lobby Gedung A Fasilkom UI • Pkl 16:30 WIB
+                        <img src="{% static 'images/icon-pin.png' %}" alt="Pin" class="inline-icon">
+                        {{ reservasi_aktif.titik_jemput }} • Pkl {{ reservasi_aktif.waktu_jemput|date:"H:i" }} WIB
                     </p>
                 </div>
             
@@ -157,41 +155,43 @@
             <!-- Area Riwayat Balon Chat -->
             <div class="chat-history-area">
             
-                <!-- Pemisah Tanggal -->
+                {% for pesan in pesan_aktif %}
+            
+                <!-- PEMISAH TANGGAL DINAMIS -->
+                {% ifchanged pesan.timestamp.date %}
                 <div class="chat-date-separator">
-                    <span>Hari ini, 24 Oktober</span>
+                    <!-- Menampilkan format seperti: 24 Oktober -->
+                    <span>{{ pesan.timestamp|date:"d F" }}</span>
                 </div>
+                {% endifchanged %}
             
-                <!-- Pesan dari Lawan Bicara (Kiri) -->
-                <div class="chat-bubble left">
-                    <img src="{% static 'images/dummy-avatar.png' %}" alt="Rizky" class="chat-bubble-avatar"
-                        onerror="this.src='https://ui-avatars.com/api/?name=Rizky+Pratama&background=f3effc&color=5c00e6'">
-                    <div class="bubble-content">
-                        <p>Halo kak! Jadi nebeng pulang jam setengah lima sore nanti kan?</p>
-                        <span class="bubble-time">10:30</span>
-                    </div>
-                </div>
-            
-                <!-- Pesan dari Diri Sendiri (Kanan) -->
+                <!-- Cek apakah pesan dikirim oleh user yang sedang login -->
+                {% if pesan.pengirim == request.user %}
+                <!-- Pesan Sendiri (Kanan) -->
                 <div class="chat-bubble right">
-                    <!-- Avatar diri sendiri (teks "Saya") -->
-                    <img src="{% static 'images/dummy-avatar.png' %}" alt="Saya" class="chat-bubble-avatar"
-                        onerror="this.src='https://ui-avatars.com/api/?name=Saya&background=3a00b3&color=fff'">
+                    <img src="{{ pesan.pengirim.profile_picture }}" alt="{{ pesan.pengirim.username }}" class="chat-bubble-avatar">
                     <div class="bubble-content">
-                        <p>Hai Rizky! Iya jadi, saya kuliahnya kelar jam 16.00 lewat dikit.</p>
-                        <span class="bubble-time">10:35</span>
+                        <p>{{ pesan.teks }}</p>
+                        <span class="bubble-time">{{ pesan.timestamp|date:"H:i" }}</span>
                     </div>
                 </div>
             
-                <!-- Pesan dari Lawan Bicara (Kiri) lagi -->
+                {% else %}
+                <!-- Pesan Lawan Bicara (Kiri) -->
                 <div class="chat-bubble left">
-                    <img src="{% static 'images/dummy-avatar.png' %}" alt="Rizky" class="chat-bubble-avatar"
-                        onerror="this.src='https://ui-avatars.com/api/?name=Rizky+Pratama&background=f3effc&color=5c00e6'">
+                    <img src="{{ pesan.pengirim.profile_picture }}" alt="{{ pesan.pengirim.username }}" class="chat-bubble-avatar">
                     <div class="bubble-content">
-                        <p>Siap bang, saya tunggu di depan lobby gedung A ya!</p>
-                        <span class="bubble-time">10:42</span>
+                        <p>{{ pesan.teks }}</p>
+                        <span class="bubble-time">{{ pesan.timestamp|date:"H:i" }}</span>
                     </div>
                 </div>
+                {% endif %}
+            
+                {% empty %}
+                <div class="chat-date-separator">
+                    <span>Belum ada pesan. Mulai obrolan!</span>
+                </div>
+                {% endfor %}
             
             </div>
 
