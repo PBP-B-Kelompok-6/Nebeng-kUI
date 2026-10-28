@@ -24,7 +24,7 @@
 
             <nav class="menu-nav">
                 <!-- ganti # dengan url 'nama_modul:show_modul' -->
-                <a href="#" class="nav-item {% if '/forum/' in request.path %}active{% endif %}"> 
+                <a href="{% url 'forum:feed' %}" class="nav-item {% if '/forum/' in request.path %}active{% endif %}">
                     <img src="{% static 'images/icon-forum.png' %}" class="nav-icon icon-default">
                     <img src="{% static 'images/icon-forum-active.png' %}" class="nav-icon icon-active">
                     Forum Tebengan

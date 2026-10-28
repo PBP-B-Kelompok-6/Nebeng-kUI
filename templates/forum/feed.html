@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Forum Tebengan - Nebeng-kUI{% endblock title %}
+
+{% block content %}
+<div class="forum-header">
+    <h2>Forum Tebengan</h2>
+    <a href="{% url 'forum:create' %}" class="btn-nav btn-nav-primary">+ Buat Post</a>
+</div>
+
+<div class="forum-filter">
+    <a href="{% url 'forum:feed' %}">Semua</a>
+    <a href="?tipe=cari">Mencari</a>
+    <a href="?tipe=beri">Memberi</a>
+</div>
+
+{% for post in posts %}
+<div class="post-card">
+    <span class="post-badge post-{{ post.post_type }}">{{ post.get_post_type_display }}</span>
+    <h3>{{ post.pickup_point }} → {{ post.destination }}</h3>
+    <p>{{ post.departure_time|date:"d M Y, H:i" }} · Sisa kursi: {{ post.seats_left }}/{{ post.max_quota }}</p>
+    <p class="post-author">oleh {{ post.author.username }}</p>
+    <a href="{% url 'forum:detail' post.pk %}">Detail</a>
+    {% if post.author == request.user %}
+        <a href="{% url 'forum:delete' post.pk %}">Hapus</a>
+    {% endif %}
+</div>
+{% empty %}
+<p>Belum ada tebengan aktif.</p>
+{% endfor %}
+{% endblock content %}

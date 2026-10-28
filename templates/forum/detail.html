@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Detail Tebengan - Nebeng-kUI{% endblock title %}
+
+{% block content %}
+<div class="post-card">
+    <span class="post-badge post-{{ post.post_type }}">{{ post.get_post_type_display }}</span>
+    <h2>{{ post.pickup_point }} → {{ post.destination }}</h2>
+    <p>{{ post.departure_time|date:"d M Y, H:i" }}</p>
+    <p>Sisa kursi: {{ post.seats_left }}/{{ post.max_quota }} ({{ post.get_status_display }})</p>
+    <p>{{ post.notes }}</p>
+    <p class="post-author">oleh {{ post.author.username }}</p>
+    {# JOIN sm fadlan ntr #}
+</div>
+<a href="{% url 'forum:feed' %}">← Kembali</a>
+{% endblock content %}
