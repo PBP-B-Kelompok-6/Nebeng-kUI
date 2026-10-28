@@ -25,16 +25,23 @@
             <nav class="menu-nav">
                 <!-- ganti # dengan url 'nama_modul:show_modul' -->
                 <a href="#" class="nav-item {% if '/forum/' in request.path %}active{% endif %}"> 
-                    <img src="{% static 'images/icon-forum.png' %}" class="nav-icon"> Forum Tebengan
+                    <img src="{% static 'images/icon-forum.png' %}" class="nav-icon icon-default">
+                    <img src="{% static 'images/icon-forum-active.png' %}" class="nav-icon icon-active">
+                    Forum Tebengan
                 </a>
                 <a href="#" class="nav-item {% if '/peta/' in request.path %}active{% endif %}">
-                    <img src="{% static 'images/icon-map.png' %}" class="nav-icon"> Peta Titik Kumpul
+                    <img src="{% static 'images/icon-map.png' %}" class="nav-icon icon-default">
+                    <img src="{% static 'images/icon-map-active.png' %}" class="nav-icon icon-active">
+                    Peta Titik Kumpul
                 </a>
                 <a href="{% url 'reservasi:show_reservasi' %}" class="nav-item {% if '/reservasi/' in request.path %}active{% endif %}">
-                    <img src="{% static 'images/icon-reservasi.png' %}" class="nav-icon"> Reservasi & Chat
+                    <img src="{% static 'images/icon-reservasi.png' %}" class="nav-icon icon-default">
+                    <img src="{% static 'images/icon-reservasi-active.png' %}" class="nav-icon icon-active">
+                    Reservasi & Chat
                 </a>
-                <a href="#" class="nav-item {% if '/profil/' in request.path %}active{% endif %}"">
-                    <img src="{% static 'images/icon-profile2.png' %}" class="nav-icon"> Profil & Reward
+                <a href="{% url 'users:profile' %}" class="nav-item {% if '/profile/' in request.path %}active{% endif %}"">
+                    <img src="{% static 'images/icon-profile2.png' %}" class="nav-icon icon-default">
+                    <img src="{% static 'images/icon-profile2-active.png' %}" class="nav-icon icon-active">Profil & Reward
                 </a>
             </nav>
         </aside>
@@ -50,14 +57,28 @@
                 </div>
                 <div class="nav-actions">
                     {% if user.is_authenticated %}
-                        <span class="nav-username">{{ user.username }}</span>
-                        <form method="post" action="{% url 'users:logout' %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn-nav btn-nav-outline">Logout</button>
-                        </form>
-                        <a href="#" class="profile-btn">
-                            
-                        </a>
+                        <div class="user-menu" id="user-menu">
+                            <button type="button" class="nav-avatar" id="user-menu-btn"
+                                    aria-haspopup="true" aria-expanded="false" aria-label="Menu akun">
+                                    <!-- harus diubah -->
+                                <span class="nav-avatar-initial"></span>
+                                    <img src="{{ user.profile_picture }}" alt=""
+                                         onerror="this.style.display='none'">
+                            </button>
+
+                            <div class="user-dropdown" id="user-dropdown" hidden>
+                                <div class="user-dropdown-head">
+                                    <strong>{{ user.get_full_name|default:user.username }}</strong>
+                                    <span>@{{ user.username }}</span>
+                                </div>
+                                <a href="{% url 'users:profile' %}" class="user-dropdown-item">Profil Saya</a>
+                                <a href="{% url 'users:profile_edit' %}" class="user-dropdown-item">Edit Profil</a>
+                                <form method="post" action="{% url 'users:logout' %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="user-dropdown-item user-dropdown-logout">Logout</button>
+                                </form>
+                            </div>
+                        </div>
                     {% else %}
                         <a href="{% url 'users:login' %}" class="btn-nav btn-nav-outline">Login</a>
                         <a href="{% url 'users:register' %}" class="btn-nav btn-nav-primary">Register</a>
@@ -73,5 +94,28 @@
 
         </div>
     </div>
+    <script>
+  (function () {
+    var menu = document.getElementById("user-menu");
+    if (!menu) return;
+    var btn = document.getElementById("user-menu-btn");
+    var panel = document.getElementById("user-dropdown");
+
+    function setOpen(open) {
+      panel.hidden = !open;
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+
+    btn.addEventListener("click", function () {
+      setOpen(panel.hidden);
+    });
+    document.addEventListener("click", function (e) {
+      if (!menu.contains(e.target)) setOpen(false);
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") setOpen(false);
+    });
+  })();
+</script>
 </body>
 </html>
