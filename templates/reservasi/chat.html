@@ -139,6 +139,16 @@
                         </p>
                     </div>
                     <div class="trip-action-buttons">
+                        {% if reservasi_aktif.tebengan.author == user %}
+                        {% if reservasi_aktif.status == 'DITERIMA' %}
+                        <button type="button" class="btn-selesai-trip"
+                            onclick="openSelesaiModal('{% url 'reservasi:selesaikan_reservasi' reservasi_aktif.id %}')">
+                            Selesaikan
+                        </button>
+                        {% elif reservasi_aktif.status == 'SELESAI' %}
+                        <span class="badge-trip-selesai">Selesai</span>
+                        {% endif %}
+                        {% endif %}
                         <button type="button" class="btn-peta">Buka Peta</button>
                     </div>
                 </div>
@@ -240,6 +250,26 @@
     </div>
 </div>
 
+<!-- MODAL SELESAIKAN PERJALANAN -->
+<div id="modal-selesai-pesan" class="modal-overlay" style="display: none;">
+    <div class="modal-card">
+        <h3>Selesaikan Perjalanan?</h3>
+        <p class="modal-description">Tebengan ini akan diselesaikan dan kamu akan menerima poin reward. Ruang obrolan
+            akan diarsipkan setelah 24 jam.</p>
+        <form id="form-selesai-modal" method="POST">
+            {% csrf_token %}
+            <div class="modal-actions">
+                <button type="button" class="btn-modal-cancel" onclick="closeSelesaiModal()">Batal</button>
+                <button type="submit" class="btn-modal-save">Ya, Selesaikan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    
+</script>
+
 <script>
     function openEditModal(tombol) {
         document.getElementById('form-edit-modal').action = tombol.getAttribute('data-url');
@@ -278,6 +308,19 @@
                 });
             });
         }
+    });
+
+    function openSelesaiModal(url) {
+        document.getElementById('form-selesai-modal').action = url;
+        document.getElementById('modal-selesai-pesan').style.display = 'flex';
+    }
+    function closeSelesaiModal() {
+        document.getElementById('modal-selesai-pesan').style.display = 'none';
+    }
+
+    // Pastikan modal ditutup ketika klik di luar kartu modal
+    window.addEventListener('click', function (event) {
+        if (event.target === document.getElementById('modal-selesai-pesan')) closeSelesaiModal();
     });
 </script>
 {% endblock content %}

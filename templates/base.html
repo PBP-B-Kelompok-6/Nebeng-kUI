@@ -53,7 +53,7 @@
             <header class="navbar-global">
                 <div class="co2-tracker">
                     <img src="{% static 'images/icon-daun.png' %}" alt="Ikon Daun" class="ikon-daun">
-                    <span>120 kg CO2 Saved</span>
+                    <span>{{ global_co2_saved }} kg CO2 Saved</span>
                 </div>
                 <div class="nav-actions">
                     {% if user.is_authenticated %}

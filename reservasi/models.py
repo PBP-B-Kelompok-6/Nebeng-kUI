@@ -22,6 +22,7 @@ class Reservasi(models.Model):
     titik_jemput = models.CharField(max_length=255)
     waktu_jemput = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         constraints = [

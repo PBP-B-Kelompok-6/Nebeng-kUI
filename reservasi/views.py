@@ -6,10 +6,14 @@ from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
+from django.utils import timezone
+from datetime import timedelta
 
 from forum.models import RidePost
 from .models import Reservasi, PesanChat
 from django.urls import reverse
+from users.rewards import POINTS_PER_PASSENGER
+from users.models import RewardLog
 
 
 
@@ -79,11 +83,17 @@ def decide_reservasi(request, pk, action):
 
 @login_required
 def show_reservasi(request):
+    batas_waktu_arsip = timezone.now() - timedelta(hours=12)
     daftar_reservasi = (
-        Reservasi.objects.filter(status__in=["DITERIMA", "SELESAI"])
+        Reservasi.objects
+        # Munculkan jika statusnya DITERIMA, ATAU jika SELESAI tapi update-nya belum lewat 24 jam
+        .filter(
+            Q(status="DITERIMA") | 
+            Q(status="SELESAI", updated_at__gte=batas_waktu_arsip)
+        )
         .filter(Q(penumpang=request.user) | Q(tebengan__author=request.user))
         .select_related("penumpang", "tebengan", "tebengan__author")
-        .order_by("-created_at")
+        .order_by("-updated_at") # Urutkan berdasarkan interaksi terbaru
     )
 
     reservasi_aktif = None
@@ -139,3 +149,32 @@ def hapus_pesan(request, pesan_id):
         else:
             messages.error(request, "Hanya pesan terakhir yang bisa ditarik.")
     return _chat_redirect(rid)
+
+@login_required
+def selesaikan_reservasi(request, reservasi_id):
+    if request.method == 'POST':
+        reservasi = get_object_or_404(Reservasi, id=reservasi_id)
+        
+        # Validasi: Hanya driver (pembuat tebengan) yang berstatus DITERIMA
+        if request.user == reservasi.tebengan.author and reservasi.status == 'DITERIMA':
+            # 1. Ubah status reservasi menjadi SELESAI
+            reservasi.status = 'SELESAI'
+            reservasi.save()
+            
+            # 2. Tambah poin ke user driver
+            request.user.reward_points += POINTS_PER_PASSENGER
+            request.user.save()
+            
+            # 3. Buat entri RewardLog sesuai field model users
+            RewardLog.objects.create(
+                user=request.user,
+                amount=POINTS_PER_PASSENGER,
+                reason=f"Menyelesaikan tebengan dengan {reservasi.penumpang.username}",
+                reference=f"reservation:{reservasi.id}"
+            )
+            
+            messages.success(request, f"Perjalanan selesai! Kamu mendapatkan {POINTS_PER_PASSENGER} poin reward.")
+        else:
+            messages.error(request, "Kamu tidak memiliki hak untuk menyelesaikan perjalanan ini.")
+            
+    return redirect(f"{reverse('reservasi:show_reservasi')}?id={reservasi_id}")

@@ -767,3 +767,39 @@
     margin: 0;
     font-size: 14px;
 }
+
+/* Container Tombol di Kartu Detail */
+.trip-action-buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Tombol Selesaikan Perjalanan */
+.btn-selesai-trip {
+    background-color: #5c00e6;
+    color: #ffffff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    white-space: nowrap;
+}
+
+.btn-selesai-trip:hover {
+    background-color: #4800b3;
+}
+
+/* Badge Status saat Perjalanan Sudah Selesai */
+.badge-trip-selesai {
+    background-color: #e5e7eb;
+    color: #4b5563;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
