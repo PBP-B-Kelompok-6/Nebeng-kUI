@@ -1,5 +1,4 @@
 from django.urls import path
-
 from users.views import login_user, logout_user, register_user, profile_view, vehicle_create, vehicle_update, vehicle_delete, profile_edit, redeem_view
 
 app_name = "users"

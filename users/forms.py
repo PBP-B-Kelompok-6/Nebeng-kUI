@@ -5,6 +5,11 @@ from django import forms
 from .models import Vehicle, normalize_plate
 
 User = get_user_model()
+def validate_npm(value):
+    value = value.strip()
+    if value and not (value.isdigit() and len(value) == 10):
+        raise forms.ValidationError("NPM harus 10 digit angka.")
+    return value
 
 FACULTIES = [
     "Fakultas Kedokteran",
@@ -31,6 +36,7 @@ class ProfileForm(forms.ModelForm):
     )
 
     class Meta:
+
         model = User
         fields = [
             "first_name", "last_name", "npm", "phone_number",
@@ -50,12 +56,17 @@ class ProfileForm(forms.ModelForm):
         widgets = {
             "bio": forms.Textarea(attrs={"rows": 4}),
         }
-
+    def clean_npm(self):
+        return validate_npm(self.cleaned_data["npm"])
+    
 class RegisterForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = User
         fields = ("username", "email", "first_name", "last_name", "npm")
 
+    def clean_npm(self):
+                return validate_npm(self.cleaned_data["npm"])
+    
 class VehicleForm(forms.ModelForm):
     class Meta:
         model = Vehicle

@@ -15,7 +15,7 @@ from users.rewards import (
     POINTS_PER_EXCHANGE, RUPIAH_PER_EXCHANGE, exchange_points, format_rupiah,
 )
 from django.core.exceptions import ValidationError
-from django.core.paginator import Paginator
+from django.db.models import Count
 
 
 
@@ -123,9 +123,39 @@ def vehicle_delete(request, pk):
 @login_required
 def profile_view(request):
     user = request.user
+    all_vehicles = user.vehicles.all()
+
+    # Filter jenis kendaraan; nilai di luar daftar diabaikan
+    vehicle_filter = request.GET.get("vehicle_type", "")
+    if vehicle_filter not in Vehicle.VehicleType.values:
+        vehicle_filter = ""
+    vehicles = (
+        all_vehicles.filter(vehicle_type=vehicle_filter)
+        if vehicle_filter else all_vehicles
+    )
+
+    counts = dict(
+        all_vehicles.order_by().values_list("vehicle_type").annotate(n=Count("pk"))
+    )
+    vehicle_total = sum(counts.values())
+    vehicle_tabs = [("", "Semua", vehicle_total)] + [
+        (value, label, counts.get(value, 0))
+        for value, label in Vehicle.VehicleType.choices
+    ]
+    vehicle_context = {
+        "vehicles": vehicles,
+        "vehicle_filter": vehicle_filter,
+        "vehicle_tabs": vehicle_tabs,
+        "vehicle_total": vehicle_total,
+    }
+
+    # Permintaan dari fetch: kirim potongan daftar kendaraan saja
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return render(request, "users/_vehicle_list.html", vehicle_context)
+
     remainder = user.reward_points % POINTS_PER_EXCHANGE
     return render(request, "users/profile.html", {
-        "vehicles": user.vehicles.all(),
+        **vehicle_context,
         "ride_count": user.reward_logs.count(),
         "exchange_lots": user.reward_points // POINTS_PER_EXCHANGE,
         "points_to_next": POINTS_PER_EXCHANGE - remainder,

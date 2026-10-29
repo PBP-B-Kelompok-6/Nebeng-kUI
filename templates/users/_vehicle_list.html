@@ -1,0 +1,31 @@
+{% if vehicles %}
+  <div class="vehicle-grid">
+    {% for vehicle in vehicles %}
+    <article class="vehicle-card">
+      <div class="vehicle-icon">{% if vehicle.vehicle_type == "motor" %}🏍️{% else %}🚗{% endif %}</div>
+      <div class="vehicle-info">
+        <span class="vehicle-label">{{ vehicle.get_vehicle_type_display }}</span>
+        <h3>{{ vehicle.name }}</h3>
+        <p class="vehicle-plate">{{ vehicle.plate_number }}</p>
+        <p class="vehicle-meta">Kapasitas: {{ vehicle.capacity }} kursi</p>
+        <div class="vehicle-actions">
+          <a href="{% url 'users:vehicle_edit' vehicle.pk %}" class="btn-small btn-small-outline">Edit</a>
+          <form method="post" action="{% url 'users:vehicle_delete' vehicle.pk %}"
+                onsubmit="return confirm('Hapus kendaraan ini?');">
+            {% csrf_token %}
+            <button type="submit" class="btn-small btn-small-danger">Hapus</button>
+          </form>
+        </div>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+{% elif vehicle_filter %}
+  <div class="vehicle-empty">
+    <p>Tidak ada kendaraan dengan jenis ini.</p>
+  </div>
+{% else %}
+  <div class="vehicle-empty">
+    <p>Belum ada kendaraan yang terdaftar.</p>
+  </div>
+{% endif %}
