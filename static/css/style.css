@@ -883,3 +883,129 @@ footer {
 .status-MENUNGGU { background: #fef3c7; color: #92400e; }
 .status-DITERIMA, .status-SELESAI { background: #dcfce7; color: #166534; }
 .status-DITOLAK { background: #fee2e2; color: #b91c1c; }
+
+/* --- ECO-POINTS --- */
+.eco-card {
+    padding: 28px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #5c00e6 0%, #8a4dff 100%);
+    color: #fff;
+}
+
+.eco-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+}
+
+.eco-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 16px 20px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.16);
+}
+
+.eco-label {
+    font-size: 12px;
+    opacity: 0.85;
+}
+
+.eco-value {
+    font-size: 28px;
+    line-height: 1.1;
+}
+
+.eco-value small {
+    font-size: 14px;
+    font-weight: 500;
+    opacity: 0.85;
+}
+
+.eco-footer {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.eco-note {
+    font-size: 13px;
+    opacity: 0.9;
+}
+
+.btn-small-light {
+    background: #fff;
+    color: #5c00e6;
+}
+
+.btn-small-light:hover {
+    background: #f3f0ff;
+}
+
+.redemption-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 14px;
+    list-style: none;
+}
+
+.redemption-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border: 1px solid #eaeaea;
+    border-radius: 12px;
+    background: #fdfbff;
+    font-size: 14px;
+}
+
+.auth-message-error {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+/* --- PENUKARAN KE SALDO --- */
+.eco-exchange {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin: 12px 0 8px;
+}
+
+.eco-exchange label {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.eco-exchange input {
+    width: 110px;
+    padding: 10px 14px;
+    border: none;
+    border-radius: 12px;
+    font: inherit;
+    color: #1F2937;
+}
+
+.eco-progress {
+    height: 8px;
+    margin-top: 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.25);
+    overflow: hidden;
+}
+
+.eco-progress span {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    background: #fff;
+}
+
+.eco-date {
+    font-size: 12px;
+    color: #6b7280;
+}
