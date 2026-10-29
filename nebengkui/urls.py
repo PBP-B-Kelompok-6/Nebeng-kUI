@@ -22,4 +22,6 @@ urlpatterns = [
     path('', include('main.urls')),
     path('', include("users.urls")),
     path('maps/', include('maps.urls')),
+    path('', include("reservasi.urls")),
+    path("forum/", include("forum.urls")),
 ]
