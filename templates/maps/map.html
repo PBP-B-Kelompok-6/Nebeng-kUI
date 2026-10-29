@@ -104,6 +104,14 @@
   const API_URL = "{% url 'maps:api_titik' %}";
   const UI_CENTER = [-6.3628, 106.8272];
 
+  // -------- catatan ----------
+  const CATATAN_URL = "{% url 'maps:api_catatan' %}";
+  const CATATAN_DETAIL = "{% url 'maps:api_catatan_detail' 0 %}";
+  const LOGIN_URL = "{% url 'users:login' %}";
+  const CSRF = "{{ csrf_token }}";
+  let catatan = [];
+  let sedangEdit = null;
+
   // ---------- state ----------
   let semuaTitik = [];
   let posisiUser = null;          // [lat, lon]
@@ -111,7 +119,6 @@
   let kataKunci = "";
   let terpilih = null;
   const markers = new Map();      // id -> marker
-  let catatan = JSON.parse(localStorage.getItem("catatan_jemput") || "[]");
   const daftarFavorit = () => semuaTitik.filter((t) => t.starred);
 
   // ---------- peta ----------
@@ -206,10 +213,6 @@
       : '<li class="kosong">Belum ada titik favorit.</li>';
   }
 
-  function renderCatatan() {
-    $("daftar-catatan").innerHTML = catatan.map((c) => `<li>"${esc(c)}"</li>`).join("");
-  }
-
   // ---------- interaksi ----------
   function pilihTitik(t) {
     terpilih = t;
@@ -269,18 +272,93 @@
     );
   });
 
-  $("form-catatan").addEventListener("submit", (e) => {
+  async function kirim(url, method, body) {
+    const res = await fetch(url, {
+      method,
+      headers: { "Content-Type": "application/json", "X-CSRFToken": CSRF },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    if (res.status === 401) {
+      window.location.href = `${LOGIN_URL}?next=${encodeURIComponent(location.pathname)}`;
+      return null;
+    }
+    return res;
+  }
+
+  async function muatCatatan() {
+    const res = await fetch(CATATAN_URL);
+    const data = await res.json();
+    catatan = data.hasil;
+    renderCatatan(data.login);
+  }
+
+  function renderCatatan(login = true) {
+    const ul = $("daftar-catatan");
+    if (!login) { ul.innerHTML = '<li class="kosong">Login untuk menyimpan catatan.</li>'; return; }
+    ul.innerHTML = catatan.length
+      ? catatan.map((c) => c.pk === sedangEdit
+          ? `<li data-pk="${c.pk}">
+               <input class="catatan-edit" value="${esc(c.teks)}" maxlength="300">
+               <div class="catatan-aksi">
+                 <button type="button" data-aksi="simpan">Simpan</button>
+                 <button type="button" data-aksi="batal">Batal</button>
+               </div>
+             </li>`
+          : `<li data-pk="${c.pk}">
+               ${c.titik_nama ? `<strong>${esc(c.titik_nama)}</strong>` : ""}
+               <span>"${esc(c.teks)}"</span>
+               <div class="catatan-aksi">
+                 <button type="button" data-aksi="edit">Edit</button>
+                 <button type="button" data-aksi="hapus">Hapus</button>
+               </div>
+             </li>`).join("")
+      : '<li class="kosong">Belum ada catatan.</li>';
+  }
+
+  $("daftar-catatan").addEventListener("click", async (e) => {
+    const tombol = e.target.closest("button[data-aksi]");
+    if (!tombol) return;
+    const li = tombol.closest("li");
+    const pk = Number(li.dataset.pk);
+    const url = CATATAN_DETAIL.replace("/0/", `/${pk}/`);
+
+    if (tombol.dataset.aksi === "edit") { sedangEdit = pk; renderCatatan(); return; }
+    if (tombol.dataset.aksi === "batal") { sedangEdit = null; renderCatatan(); return; }
+
+    if (tombol.dataset.aksi === "simpan") {
+      const teks = li.querySelector(".catatan-edit").value.trim();
+      const res = await kirim(url, "PUT", { teks });
+      if (!res) return;
+      if (!res.ok) return alert((await res.json()).error || "Gagal menyimpan.");
+      const baru = (await res.json()).catatan;
+      catatan = catatan.map((c) => (c.pk === pk ? baru : c));
+      sedangEdit = null;
+      renderCatatan();
+    }
+
+    if (tombol.dataset.aksi === "hapus") {
+      if (!confirm("Hapus catatan ini?")) return;
+      const res = await kirim(url, "DELETE");
+      if (!res || !res.ok) return;
+      catatan = catatan.filter((c) => c.pk !== pk);
+      renderCatatan();
+    }
+  });
+
+  $("form-catatan").addEventListener("submit", async (e) => {
     e.preventDefault();
-    const val = $("input-catatan").value.trim();
-    if (!val) return;
-    catatan.unshift(val);
-    localStorage.setItem("catatan_jemput", JSON.stringify(catatan.slice(0, 20)));
+    const teks = $("input-catatan").value.trim();
+    if (!teks) return;
+    const res = await kirim(CATATAN_URL, "POST", { teks, titik: terpilih ? terpilih.pk : null });
+    if (!res) return;
+    if (!res.ok) return alert((await res.json()).error || "Gagal menyimpan.");
+    catatan.unshift((await res.json()).catatan);
     $("input-catatan").value = "";
     renderCatatan();
   });
 
   // ---------- start ----------
-  renderCatatan();
+  muatCatatan();
   muatTitik();
 })();
 </script>

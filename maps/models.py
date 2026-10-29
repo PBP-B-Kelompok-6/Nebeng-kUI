@@ -44,3 +44,28 @@ class TitikKumpul(models.Model):
             "lon": self.lon,
             "deskripsi": self.deskripsi,
         }
+
+class CatatanPenjemputan(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="catatan_penjemputan"
+    )
+    titik = models.ForeignKey(
+        TitikKumpul, on_delete=models.SET_NULL, null=True, blank=True, related_name="catatan"
+    )
+    teks = models.CharField(max_length=300)
+    dibuat = models.DateTimeField(auto_now_add=True)
+    diubah = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-dibuat"]
+
+    def __str__(self):
+        return f"{self.user} - {self.teks[:30]}"
+
+    def as_dict(self):
+        return {
+            "pk": self.pk,
+            "teks": self.teks,
+            "titik_pk": self.titik_id,
+            "titik_nama": self.titik.nama if self.titik else "",
+        }
