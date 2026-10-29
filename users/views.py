@@ -7,9 +7,16 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
+
 from django.contrib.auth.decorators import login_required
 
 from users.forms import RegisterForm, ProfileForm, VehicleForm
+from users.rewards import (
+    POINTS_PER_EXCHANGE, RUPIAH_PER_EXCHANGE, exchange_points, format_rupiah,
+)
+from django.core.exceptions import ValidationError
+from django.core.paginator import Paginator
+
 
 
 def register_user(request):
@@ -52,10 +59,10 @@ def logout_user(request):
     response.delete_cookie("last_login")
     return response
 
-@login_required
-def profile_view(request):
-    vehicles = request.user.vehicles.all()
-    return render(request, "users/profile.html", {"vehicles": vehicles})
+# @login_required
+# def profile_view(request):
+#     vehicles = request.user.vehicles.all()
+#     return render(request, "users/profile.html", {"vehicles": vehicles})
 
 @login_required
 def profile_edit(request):
@@ -111,4 +118,42 @@ def vehicle_delete(request, pk):
     vehicle = get_object_or_404(Vehicle, pk=pk, owner=request.user)
     vehicle.delete()
     messages.success(request, "Kendaraan berhasil dihapus.")
+    return redirect("users:profile")
+
+@login_required
+def profile_view(request):
+    user = request.user
+    remainder = user.reward_points % POINTS_PER_EXCHANGE
+    return render(request, "users/profile.html", {
+        "vehicles": user.vehicles.all(),
+        "ride_count": user.reward_logs.count(),
+        "exchange_lots": user.reward_points // POINTS_PER_EXCHANGE,
+        "points_to_next": POINTS_PER_EXCHANGE - remainder,
+        "progress_pct": remainder * 100 // POINTS_PER_EXCHANGE,
+        "points_per_exchange": POINTS_PER_EXCHANGE,
+        "rupiah_per_exchange": RUPIAH_PER_EXCHANGE,
+        "recent_exchanges": user.redemptions.all()[:3],
+    })
+
+
+@login_required
+@require_POST
+def redeem_view(request):
+    try:
+        lots = int(request.POST.get("lots", ""))
+    except ValueError:
+        messages.error(request, "Masukkan jumlah paket yang valid.")
+        return redirect("users:profile")
+
+    try:
+        redemption = exchange_points(request.user, lots)
+    except ValidationError as exc:
+        messages.error(request, exc.messages[0])
+    else:
+        messages.success(
+            request,
+            f"{redemption.points} poin ditukar menjadi "
+            f"{format_rupiah(redemption.amount_rupiah)}. "
+            f"Saldo kamu sekarang {format_rupiah(request.user.balance)}.",
+        )
     return redirect("users:profile")

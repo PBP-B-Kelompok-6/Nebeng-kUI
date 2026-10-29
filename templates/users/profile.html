@@ -2,8 +2,8 @@
 {% block content %}
 <div class="profile-page">
     {% for message in messages %}
-        <div class="auth-message">{{ message }}</div>
-    {% endfor %}
+        <div class="auth-message {% if message.tags == 'error' %}auth-message-error{% endif %}">{{ message }}</div>
+    {% endfor %}  
 
   <section class="profile-card">
     <div class="profile-avatar">
@@ -36,6 +36,57 @@
         <dd>{{ user.date_joined|date:"d M Y" }}</dd>
       </div>
     </dl>
+  </section>
+
+  <section class="eco-section" id="eco-points">
+    <div class="eco-card">
+      <div class="eco-stats">
+        <div class="eco-stat">
+          <span class="eco-label">Total Eco-Points</span>
+          <strong class="eco-value">{{ user.reward_points }} <small>Pts</small></strong>
+        </div>
+        <div class="eco-stat">
+          <span class="eco-label">Saldo</span>
+          <strong class="eco-value">Rp {{ user.balance|floatformat:"0g" }}</strong>
+        </div>
+        <div class="eco-stat">
+          <span class="eco-label">Tebengan selesai</span>
+          <strong class="eco-value">{{ ride_count }} <small>kali</small></strong>
+        </div>
+      </div>
+
+      <div class="eco-footer">
+        <p class="eco-note">
+          Tiap {{ points_per_exchange }} poin bisa ditukar menjadi
+          Rp {{ rupiah_per_exchange|floatformat:"0g" }} saldo.
+        </p>
+
+        {% if exchange_lots %}
+          <form method="post" action="{% url 'users:redeem' %}" class="eco-exchange">
+            {% csrf_token %}
+            <label for="exchange-lots">Jumlah paket</label>
+            <input type="number" id="exchange-lots" name="lots"
+                  min="1" max="{{ exchange_lots }}" value="1" required>
+            <button type="submit" class="btn-small btn-small-light">Tukar ke Saldo</button>
+          </form>
+          <p class="eco-note">Maksimal {{ exchange_lots }} paket dengan poinmu sekarang.</p>
+        {% else %}
+          <p class="eco-note">Butuh {{ points_to_next }} poin lagi untuk penukaran pertama.</p>
+          <div class="eco-progress"><span style="width: {{ progress_pct }}%"></span></div>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if recent_exchanges %}
+      <ul class="redemption-list">
+        {% for r in recent_exchanges %}
+        <li>
+          <span>{{ r.points }} poin → Rp {{ r.amount_rupiah|floatformat:"0g" }}</span>
+          <span class="eco-date">{{ r.created_at|date:"d M Y, H:i" }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
   </section>
 
   <section class="vehicle-section">
