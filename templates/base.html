@@ -30,7 +30,7 @@
                     Forum Tebengan
                 </a>
                 <a href="{% url 'maps:halaman' %}" class="nav-item {% if '/maps/' in request.path %}active{% endif %}">
-                    <img src="{% static 'images/icon-map.png' %}" class="nav-icon"> 
+                    <img src="{% static 'images/icon-map.png' %}" class="nav-icon icon-default"> 
                     <img src="{% static 'images/icon-map-active.png' %}" class="nav-icon icon-active">
                     Peta Titik Kumpul
                 </a>
@@ -39,7 +39,7 @@
                     <img src="{% static 'images/icon-reservasi-active.png' %}" class="nav-icon icon-active">
                     Reservasi & Chat
                 </a>
-                <a href="{% url 'users:profile' %}" class="nav-item {% if '/profile/' in request.path %}active{% endif %}"">
+                <a href="{% url 'users:profile' %}" class="nav-item {% if '/profile/' in request.path %}active{% endif %}">
                     <img src="{% static 'images/icon-profile2.png' %}" class="nav-icon icon-default">
                     <img src="{% static 'images/icon-profile2-active.png' %}" class="nav-icon icon-active">Profil & Reward
                 </a>
