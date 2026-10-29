@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block title %}Detail Tumpangan - Nebeng-kUI{% endblock title %}
+
+{% block content %}
+<div class="forum-page detail-page">
+    <a href="{% url 'forum:feed' %}" class="btn-cancel">← Kembali ke forum</a>
+
+    <article class="ride-card ride-card-lg">
+        <div class="ride-card-top">
+            <div class="ride-author">
+                <span class="ride-avatar">{{ post.author.username|first|upper }}</span>
+                <div>
+                    <strong>{{ post.author.username }}</strong>
+                    <small>Pemberi tumpangan</small>
+                </div>
+            </div>
+            <span class="seat-pill {% if post.status == 'penuh' %}seat-full{% elif post.seats_left <= 1 %}seat-low{% endif %}">
+                {% if post.status == 'penuh' %}Penuh{% else %}{{ post.seats_left }}/{{ post.max_quota }} kursi tersisa{% endif %}
+            </span>
+        </div>
+
+        <div class="route">
+            <div class="route-line">
+                <span class="dot dot-start"></span><span class="line"></span><span class="dot dot-end"></span>
+            </div>
+            <div class="route-text">
+                <div><small>Titik jemput</small><strong>{{ post.pickup_point }}</strong></div>
+                <div><small>Tujuan</small><strong>{{ post.destination }}</strong></div>
+            </div>
+        </div>
+
+        <p class="ride-time">🕒 {{ post.departure_time|date:"l, d F Y · H:i" }}</p>
+        {% if post.notes %}<p class="ride-notes">{{ post.notes }}</p>{% endif %}
+
+        <div class="ride-join">
+            {% if not user.is_authenticated %}
+                <a href="{% url 'users:login' %}" class="btn-small btn-small-primary">Login untuk join</a>
+            {% elif post.author != user %}
+                {% if my_reservation %}
+                    <span class="status-chip status-{{ my_reservation.status }}">{{ my_reservation.get_status_display }}</span>
+                    {% if my_reservation.chat_unlocked %}
+                        <a href="{% url 'reservasi:show_reservasi' %}?id={{ my_reservation.id }}" class="btn-small btn-small-primary">Buka Chat</a>
+                    {% endif %}
+                {% elif post.status == 'aktif' %}
+                    <form method="post" action="{% url 'reservasi:join' post.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-small btn-small-primary">Join Tebengan</button>
+                    </form>
+                {% else %}
+                    <span class="status-chip status-rejected">Sudah penuh</span>
+                {% endif %}
+            {% else %}
+                <a href="{% url 'forum:delete' post.pk %}" class="btn-small btn-small-danger">Hapus post</a>
+            {% endif %}
+        </div>
+    </article>
+
+    {% if join_requests %}
+    <h2 class="req-title">Permintaan Join</h2>
+    {% for r in join_requests %}
+    <div class="req-row">
+        <div class="ride-author">
+            <span class="ride-avatar">{{ r.penumpang.username|first|upper }}</span>
+            <strong>{{ r.penumpang.username }}</strong>
+        </div>
+        <div class="ride-actions">
+            {% if r.status == 'MENUNGGU' %}
+                <form method="post" action="{% url 'reservasi:decide' r.pk 'accept' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-small btn-small-primary">Terima</button>
+                </form>
+                <form method="post" action="{% url 'reservasi:decide' r.pk 'reject' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-small btn-small-outline">Tolak</button>
+                </form>
+            {% else %}
+                <span class="status-chip status-{{ r.status }}">{{ r.get_status_display }}</span>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+{% endblock content %}

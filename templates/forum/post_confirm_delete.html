@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Hapus post ini?</h2>
+<p>{{ object }}</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn-nav btn-nav-primary">Ya, hapus</button>
+    <a href="{% url 'forum:feed' %}" class="btn-nav btn-nav-outline">Batal</a>
+</form>
+{% endblock content %}

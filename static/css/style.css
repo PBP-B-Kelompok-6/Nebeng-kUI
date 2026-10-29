@@ -83,14 +83,31 @@ body {
     color: #5c00e6;
 }
 
-/* 2. Efek ketika halaman sedang dipilih / aktif (ungu terang, tulisan tetap hitam) */
+/* 2. Efek ketika halaman sedang dipilih */
 .nav-item.active {
     background-color: #5c00e6;
     /* Warna ungu terang */
-    color: #BDC0C0;
+    color: #D9CCFF;
     /* Warna teks hitam/abu gelap bawaan aplikasi */
 }
 
+/* 1. Kondisi Default: Sembunyikan ikon aktif, tampilkan ikon default */
+.nav-item .icon-active {
+    display: none;
+}
+
+.nav-item .icon-default {
+    display: block;
+}
+
+/* 2. Kondisi Hover & Active: Sembunyikan ikon default, tampilkan ikon aktif */
+.nav-item.active .icon-default {
+    display: none;
+}
+
+.nav-item.active .icon-active {
+    display: block;
+}
 /* --- KOLOM KANAN (WRAPPER) --- */
 .main-wrapper {
     flex-grow: 1;
@@ -174,9 +191,6 @@ body {
 
 main {
     flex-grow: 1;
-    padding: 30px;
-    max-width: 1000px;
-    margin: 0 auto;
     width: 100%;
 }
 
@@ -190,7 +204,7 @@ footer {
 }
 
 /* AKUN */
-./* --- AKSI AKUN DI NAVBAR ATAS --- */
+/* --- AKSI AKUN DI NAVBAR ATAS --- */
 
 .nav-actions {
     display: flex;
@@ -761,3 +775,111 @@ footer {
     background: #fee2e2;
     color: #b91c1c;
 }
+
+/* --- FORUM --- */
+/* --- FORUM --- */
+.forum-page { max-width: 960px; margin: 0 auto; }
+.detail-page { max-width: 680px; }
+
+.forum-header {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 16px; margin-bottom: 24px;
+}
+.forum-header h1 { font-size: 26px; }
+.forum-sub { margin-top: 4px; font-size: 14px; color: #6b7280; }
+
+.ride-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+}
+
+.ride-card {
+    display: flex; flex-direction: column; gap: 18px;
+    padding: 20px;
+    border: 1px solid #eaeaea; border-radius: 16px;
+    background: #fff;
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+.ride-card:hover { box-shadow: 0 10px 28px rgba(92, 0, 230, 0.10); transform: translateY(-2px); }
+.ride-card-lg { margin-top: 16px; padding: 28px; }
+.ride-card-lg:hover { transform: none; box-shadow: none; }
+
+.ride-card-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+
+.ride-author { display: flex; align-items: center; gap: 10px; }
+.ride-author strong { display: block; font-size: 14px; }
+.ride-author small { font-size: 12px; color: #9ca3af; }
+.ride-avatar {
+    display: flex; align-items: center; justify-content: center;
+    width: 38px; height: 38px; border-radius: 50%;
+    background: #5c00e6; color: #fff; font-weight: 700;
+}
+
+.seat-pill {
+    padding: 4px 12px; border-radius: 999px;
+    background: #dcfce7; color: #166534;
+    font-size: 12px; font-weight: 600; white-space: nowrap;
+}
+.seat-low { background: #fef3c7; color: #92400e; }
+.seat-full { background: #fee2e2; color: #b91c1c; }
+
+/* rute: titik jemput -> tujuan */
+.route { display: flex; gap: 14px; }
+.route-line { display: flex; flex-direction: column; align-items: center; padding-top: 4px; }
+.dot { width: 12px; height: 12px; border-radius: 50%; }
+.dot-start { border: 3px solid #5c00e6; background: #fff; }
+.dot-end { background: #5c00e6; }
+.line { flex: 1; width: 2px; min-height: 24px; margin: 4px 0; background: #d8ccff; }
+.route-text { display: flex; flex-direction: column; gap: 14px; }
+.route-text small {
+    display: block; font-size: 11px; font-weight: 600;
+    letter-spacing: 0.04em; text-transform: uppercase; color: #9ca3af;
+}
+.route-text strong { font-size: 16px; }
+
+.ride-footer {
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    padding-top: 14px; border-top: 1px solid #f0f0f0;
+}
+.ride-time { font-size: 13px; font-weight: 500; color: #4b5563; }
+.ride-notes {
+    padding: 12px 14px; border-radius: 10px;
+    background: #f5f3ff; font-size: 14px; line-height: 1.5; color: #4b5563;
+}
+.ride-actions { display: flex; align-items: center; gap: 8px; }
+.ride-actions form { margin: 0; }
+.ride-join { display: flex; align-items: center; gap: 12px; padding-top: 4px; }
+.ride-join form { margin: 0; }
+
+/* status reservasi */
+.status-chip { padding: 5px 14px; border-radius: 999px; font-size: 13px; font-weight: 600; }
+.status-pending { background: #fef3c7; color: #92400e; }
+.status-accepted, .status-completed { background: #dcfce7; color: #166534; }
+.status-rejected, .status-cancelled { background: #fee2e2; color: #b91c1c; }
+
+.req-title { margin: 28px 0 12px; font-size: 18px; }
+.req-row {
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    padding: 14px 18px; margin-bottom: 10px;
+    border: 1px solid #eaeaea; border-radius: 12px; background: #fff;
+}
+
+.forum-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+.forum-tabs a {
+    padding: 8px 16px; border-radius: 999px;
+    color: #4b5563; font-size: 14px; font-weight: 600; text-decoration: none;
+}
+.forum-tabs a:hover { background: #f3f0ff; color: #5c00e6; }
+.forum-tabs a.active { background: #5c00e6; color: #fff; }
+
+.count-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 20px; height: 20px; margin-left: 6px; padding: 0 6px;
+    border-radius: 999px; background: #dc2626; color: #fff;
+    font-size: 11px; font-weight: 700;
+}
+
+.status-MENUNGGU { background: #fef3c7; color: #92400e; }
+.status-DITERIMA, .status-SELESAI { background: #dcfce7; color: #166534; }
+.status-DITOLAK { background: #fee2e2; color: #b91c1c; }

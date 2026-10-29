@@ -24,17 +24,24 @@
 
             <nav class="menu-nav">
                 <!-- ganti # dengan url 'nama_modul:show_modul' -->
-                <a href="#" class="nav-item {% if '/forum/' in request.path %}active{% endif %}"> 
-                    <img src="{% static 'images/icon-forum.png' %}" class="nav-icon"> Forum Tebengan
+                <a href="{% url 'forum:feed' %}" class="nav-item {% if '/forum/' in request.path %}active{% endif %}">
+                    <img src="{% static 'images/icon-forum.png' %}" class="nav-icon icon-default">
+                    <img src="{% static 'images/icon-forum-active.png' %}" class="nav-icon icon-active">
+                    Forum Tebengan
                 </a>
                 <a href="#" class="nav-item {% if '/peta/' in request.path %}active{% endif %}">
-                    <img src="{% static 'images/icon-map.png' %}" class="nav-icon"> Peta Titik Kumpul
+                    <img src="{% static 'images/icon-map.png' %}" class="nav-icon icon-default">
+                    <img src="{% static 'images/icon-map-active.png' %}" class="nav-icon icon-active">
+                    Peta Titik Kumpul
                 </a>
                 <a href="{% url 'reservasi:show_reservasi' %}" class="nav-item {% if '/reservasi/' in request.path %}active{% endif %}">
-                    <img src="{% static 'images/icon-reservasi.png' %}" class="nav-icon"> Reservasi & Chat
+                    <img src="{% static 'images/icon-reservasi.png' %}" class="nav-icon icon-default">
+                    <img src="{% static 'images/icon-reservasi-active.png' %}" class="nav-icon icon-active">
+                    Reservasi & Chat
                 </a>
                 <a href="{% url 'users:profile' %}" class="nav-item {% if '/profile/' in request.path %}active{% endif %}"">
-                    <img src="{% static 'images/icon-profile2.png' %}" class="nav-icon"> Profil & Reward
+                    <img src="{% static 'images/icon-profile2.png' %}" class="nav-icon icon-default">
+                    <img src="{% static 'images/icon-profile2-active.png' %}" class="nav-icon icon-active">Profil & Reward
                 </a>
             </nav>
         </aside>
