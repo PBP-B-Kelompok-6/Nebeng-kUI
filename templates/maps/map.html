@@ -111,8 +111,8 @@
   let kataKunci = "";
   let terpilih = null;
   const markers = new Map();      // id -> marker
-  const favorit = new Set(JSON.parse(localStorage.getItem("favorit_titik") || "[]"));
   let catatan = JSON.parse(localStorage.getItem("catatan_jemput") || "[]");
+  const daftarFavorit = () => semuaTitik.filter((t) => t.starred);
 
   // ---------- peta ----------
   const map = L.map("map").setView(UI_CENTER, 15);
@@ -191,11 +191,11 @@
   }
 
   function renderStatistik() {
-    $("stat-favorit").textContent = `${favorit.size} Tersimpan`;
+    $("stat-favorit").textContent = `${daftarFavorit().length} Tersimpan`;
   }
 
   function renderFavorit() {
-    const daftar = semuaTitik.filter((t) => favorit.has(t.id));
+    const daftar = daftarFavorit();
     $("favorit-total").textContent = `${daftar.length} total`;
     $("daftar-favorit").innerHTML = daftar.length
       ? daftar.map((t) => `
@@ -218,18 +218,23 @@
     $("terpilih-nama").textContent = t.nama;
     $("terpilih-deskripsi").textContent = t.deskripsi || "Titik strategis di area kampus UI Depok.";
     $("terpilih-info").textContent = `${t.label}${t.jarak_m != null ? " · " + fmtJarak(t.jarak_m) : ""}`;
-    $("terpilih-favorit").classList.toggle("aktif", favorit.has(t.id));
+    $("terpilih-favorit").classList.toggle("aktif", t.starred);
   }
 
-  function toggleFavorit(id) {
-    favorit.has(id) ? favorit.delete(id) : favorit.add(id);
-    localStorage.setItem("favorit_titik", JSON.stringify([...favorit]));
-    $("terpilih-favorit").classList.toggle("aktif", terpilih && favorit.has(terpilih.id));
-    renderStatistik();
-    renderFavorit();
+  async function toggleFavorit(t) {
+  const res = await fetch(`/maps/api/titik/${t.pk}/star/`, {
+    method: "POST",
+    headers: { "X-CSRFToken": "{{ csrf_token }}" },
+  });
+  if (res.redirected) { window.location.href = res.url; return; }   // belum login -> ke halaman login
+  if (!res.ok) return alert("Gagal menyimpan favorit.");
+  t.starred = (await res.json()).starred;
+  $("terpilih-favorit").classList.toggle("aktif", t.starred);
+  renderStatistik();
+  renderFavorit();
   }
 
-  $("terpilih-favorit").addEventListener("click", () => terpilih && toggleFavorit(terpilih.id));
+  $("terpilih-favorit").addEventListener("click", () => terpilih && toggleFavorit(terpilih));
 
   $("terpilih-pilih").addEventListener("click", () => {
     if (!terpilih) return;
