@@ -1,0 +1,365 @@
+{% extends "base.html" %}
+{% block title %}Peta Titik Kumpul{% endblock title %}
+
+{% block meta %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+{% endblock meta %}
+
+{% block content %}
+<main class="peta-page">
+
+  <!-- ===== Header halaman ===== -->
+  <header class="peta-header">
+    <div>
+      <span class="badge">Navigasi Kampus UI</span>
+      <span class="lokasi-kecil">Depok Campus</span>
+      <h1>Peta Titik Kumpul &amp; Halte Strategis</h1>
+    </div>
+    <div class="zona-hijau">
+      <span class="zona-label">Zona Hijau Kampus</span>
+      <strong>0 Emisi Karbon Area</strong>
+    </div>
+  </header>
+
+  <div class="peta-grid">
+
+    <!-- ===== Kolom kiri: peta + statistik ===== -->
+    <section class="peta-kiri">
+      <div class="peta-wrapper">
+        <div class="peta-toolbar">
+          <label class="search-box">
+            <input type="search" id="cari-titik" placeholder="Cari halte atau titik kumpul...">
+          </label>
+          <button type="button" id="btn-lokasi-saya" class="btn-primary">Lokasi Saya</button>
+        </div>
+
+        <div id="map" aria-label="Peta kampus UI Depok"></div>
+
+        <!-- kartu "Terpilih" di atas peta -->
+        <article class="kartu-terpilih" id="kartu-terpilih" hidden>
+          <span class="badge-kecil">Terpilih</span>
+          <button type="button" class="btn-favorit" id="terpilih-favorit" aria-label="Simpan ke favorit"></button>
+          <h2 id="terpilih-nama"></h2>
+          <p id="terpilih-deskripsi"></p>
+          <div class="kartu-terpilih-footer">
+            <span id="terpilih-info"></span>
+            <button type="button" class="btn-primary btn-kecil" id="terpilih-pilih">Pilih Titik Ini</button>
+          </div>
+        </article>
+      </div>
+
+      <!-- statistik -->
+      <div class="statistik">
+        <div class="stat-card"><span>Titik Favorit</span><strong id="stat-favorit">0 Tersimpan</strong></div>
+      </div>
+    </section>
+
+    <!-- ===== Kolom kanan: favorit + catatan ===== -->
+    <aside class="peta-kanan">
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Titik Favorit</h2>
+          <span id="favorit-total">0 total</span>
+        </div>
+        <ul id="daftar-favorit" class="list-favorit">
+          <li class="kosong">Belum ada titik favorit.</li>
+        </ul>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><h2>Catatan Penjemputan</h2></div>
+        <ul id="daftar-catatan" class="list-catatan"></ul>
+        <form id="form-catatan">
+          <input type="text" id="input-catatan" placeholder="Tambah catatan baru" required>
+          <button type="submit" class="btn-outline">Tambah Catatan Baru</button>
+        </form>
+      </section>
+    </aside>
+  </div>
+
+  <!-- ===== Daftar halte terdekat ===== -->
+  <section class="daftar-terdekat">
+    <div class="daftar-head">
+      <div>
+        <h2>Daftar Halte &amp; Titik Kumpul Terdekat</h2>
+        <p>Pilih titik strategis di dalam area kampus UI Depok untuk memulai perjalanan nebeng.</p>
+      </div>
+      <div class="chips" id="chips-filter">
+        <button class="chip aktif" data-kategori="">Semua</button>
+        <button class="chip" data-kategori="fakultas,perpustakaan">Fakultas</button>
+        <button class="chip" data-kategori="stasiun,gerbang">Stasiun &amp; Gerbang</button>
+      </div>
+    </div>
+
+    <div class="kartu-grid" id="kartu-grid">
+      <!-- diisi oleh JavaScript -->
+    </div>
+  </section>
+</main>
+
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(() => {
+  const API_URL = "{% url 'maps:api_titik' %}";
+  const UI_CENTER = [-6.3628, 106.8272];
+
+  // -------- catatan ----------
+  const CATATAN_URL = "{% url 'maps:api_catatan' %}";
+  const CATATAN_DETAIL = "{% url 'maps:api_catatan_detail' 0 %}";
+  const LOGIN_URL = "{% url 'users:login' %}";
+  const CSRF = "{{ csrf_token }}";
+  let catatan = [];
+  let sedangEdit = null;
+
+  // ---------- state ----------
+  let semuaTitik = [];
+  let posisiUser = null;          // [lat, lon]
+  let filterKategori = "";        // "" = semua
+  let kataKunci = "";
+  let terpilih = null;
+  const markers = new Map();      // id -> marker
+  const daftarFavorit = () => semuaTitik.filter((t) => t.starred);
+
+  // ---------- peta ----------
+  const map = L.map("map").setView(UI_CENTER, 15);
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    attribution: "&copy; OpenStreetMap contributors",
+  }).addTo(map);
+  const layerMarker = L.layerGroup().addTo(map);
+
+  // ---------- util ----------
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const fmtJarak = (m) => (m == null ? "" : m < 1000 ? `${m} m` : `${(m / 1000).toFixed(1)} km`);
+
+  // ---------- ambil data dari Django ----------
+  async function muatTitik() {
+    const params = new URLSearchParams();
+    if (posisiUser) { params.set("lat", posisiUser[0]); params.set("lon", posisiUser[1]); }
+    const res = await fetch(`${API_URL}?${params}`);
+    if (!res.ok) { $("kartu-grid").innerHTML = "<p>Gagal memuat data titik.</p>"; return; }
+    semuaTitik = (await res.json()).hasil;
+    render();
+  }
+
+  function titikTersaring() {
+    return semuaTitik.filter((t) => {
+      if (filterKategori && !filterKategori.split(",").includes(t.kategori)) return false;
+      if (kataKunci && !t.nama.toLowerCase().includes(kataKunci)) return false;
+      return true;
+    });
+  }
+
+  // ---------- render ----------
+  function render() {
+    const data = titikTersaring();
+    renderMarker(data);
+    renderKartu(data);
+    renderStatistik();
+    renderFavorit();
+  }
+
+  function renderMarker(data) {
+    layerMarker.clearLayers();
+    markers.clear();
+    data.forEach((t) => {
+      const m = L.marker([t.lat, t.lon]).addTo(layerMarker);
+      m.bindTooltip(t.nama);
+      m.on("click", () => pilihTitik(t));
+      markers.set(t.id, m);
+    });
+  }
+
+  function renderKartu(data) {
+    const grid = $("kartu-grid");
+    if (!data.length) { grid.innerHTML = "<p>Tidak ada titik yang cocok.</p>"; return; }
+    grid.innerHTML = data.slice(0, 12).map((t) => `
+      <article class="kartu-titik" data-id="${esc(t.id)}">
+        <div class="kartu-atas">
+          <span class="badge kat-${t.kategori}">${esc(t.label)}</span>
+          <span class="jarak">${fmtJarak(t.jarak_m)}</span>
+        </div>
+        <h3>${esc(t.nama)}</h3>
+        <p>${esc(t.deskripsi || "Titik strategis di area kampus UI Depok.")}</p>
+        <div class="kartu-bawah">
+          <span>${(t.tebengan ?? 0)} Tebengan</span>
+          <button type="button" class="btn-panah" aria-label="Lihat di peta">&rarr;</button>
+        </div>
+      </article>`).join("");
+    grid.querySelectorAll(".kartu-titik").forEach((el) =>
+      el.addEventListener("click", () => {
+        const t = semuaTitik.find((x) => x.id === el.dataset.id);
+        if (t) pilihTitik(t);
+        $("map").scrollIntoView({ behavior: "smooth", block: "center" });
+      }));
+  }
+
+  function renderStatistik() {
+    $("stat-favorit").textContent = `${daftarFavorit().length} Tersimpan`;
+  }
+
+  function renderFavorit() {
+    const daftar = daftarFavorit();
+    $("favorit-total").textContent = `${daftar.length} total`;
+    $("daftar-favorit").innerHTML = daftar.length
+      ? daftar.map((t) => `
+          <li data-id="${esc(t.id)}">
+            <strong>${esc(t.nama)}</strong>
+            <small>${esc(t.label)} ${t.jarak_m != null ? "· " + fmtJarak(t.jarak_m) + " dari posisi Anda" : ""}</small>
+          </li>`).join("")
+      : '<li class="kosong">Belum ada titik favorit.</li>';
+  }
+
+  // ---------- interaksi ----------
+  function pilihTitik(t) {
+    terpilih = t;
+    map.flyTo([t.lat, t.lon], 17);
+    $("kartu-terpilih").hidden = false;
+    $("terpilih-nama").textContent = t.nama;
+    $("terpilih-deskripsi").textContent = t.deskripsi || "Titik strategis di area kampus UI Depok.";
+    $("terpilih-info").textContent = `${t.label}${t.jarak_m != null ? " · " + fmtJarak(t.jarak_m) : ""}`;
+    $("terpilih-favorit").classList.toggle("aktif", t.starred);
+  }
+
+  async function toggleFavorit(t) {
+  const res = await fetch(`/maps/api/titik/${t.pk}/star/`, {
+    method: "POST",
+    headers: { "X-CSRFToken": "{{ csrf_token }}" },
+  });
+  if (res.redirected) { window.location.href = res.url; return; }   // belum login -> ke halaman login
+  if (!res.ok) return alert("Gagal menyimpan favorit.");
+  t.starred = (await res.json()).starred;
+  $("terpilih-favorit").classList.toggle("aktif", t.starred);
+  renderStatistik();
+  renderFavorit();
+  }
+
+  $("terpilih-favorit").addEventListener("click", () => terpilih && toggleFavorit(terpilih));
+
+  $("terpilih-pilih").addEventListener("click", () => {
+    if (!terpilih) return;
+    // arahkan ke halaman reservasi dengan titik yang dipilih (sesuaikan URL timmu)
+    window.location.href = `/reservasi/?titik=${encodeURIComponent(terpilih.id)}&nama=${encodeURIComponent(terpilih.nama)}`;
+  });
+
+  $("cari-titik").addEventListener("input", (e) => {
+    kataKunci = e.target.value.trim().toLowerCase();
+    render();
+  });
+
+  $("chips-filter").addEventListener("click", (e) => {
+    const chip = e.target.closest(".chip");
+    if (!chip) return;
+    document.querySelectorAll("#chips-filter .chip").forEach((c) => c.classList.remove("aktif"));
+    chip.classList.add("aktif");
+    filterKategori = chip.dataset.kategori;
+    render();
+  });
+
+  $("btn-lokasi-saya").addEventListener("click", () => {
+    if (!navigator.geolocation) return alert("Browser tidak mendukung geolokasi.");
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        posisiUser = [pos.coords.latitude, pos.coords.longitude];
+        L.circleMarker(posisiUser, { radius: 8 }).addTo(map).bindTooltip("Lokasi Anda");
+        map.flyTo(posisiUser, 16);
+        muatTitik(); // muat ulang agar jarak dihitung & diurutkan
+      },
+      () => alert("Tidak bisa mengambil lokasi. Periksa izin lokasi browser."),
+    );
+  });
+
+  async function kirim(url, method, body) {
+    const res = await fetch(url, {
+      method,
+      headers: { "Content-Type": "application/json", "X-CSRFToken": CSRF },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    if (res.status === 401) {
+      window.location.href = `${LOGIN_URL}?next=${encodeURIComponent(location.pathname)}`;
+      return null;
+    }
+    return res;
+  }
+
+  async function muatCatatan() {
+    const res = await fetch(CATATAN_URL);
+    const data = await res.json();
+    catatan = data.hasil;
+    renderCatatan(data.login);
+  }
+
+  function renderCatatan(login = true) {
+    const ul = $("daftar-catatan");
+    if (!login) { ul.innerHTML = '<li class="kosong">Login untuk menyimpan catatan.</li>'; return; }
+    ul.innerHTML = catatan.length
+      ? catatan.map((c) => c.pk === sedangEdit
+          ? `<li data-pk="${c.pk}">
+               <input class="catatan-edit" value="${esc(c.teks)}" maxlength="300">
+               <div class="catatan-aksi">
+                 <button type="button" data-aksi="simpan">Simpan</button>
+                 <button type="button" data-aksi="batal">Batal</button>
+               </div>
+             </li>`
+          : `<li data-pk="${c.pk}">
+               ${c.titik_nama ? `<strong>${esc(c.titik_nama)}</strong>` : ""}
+               <span>"${esc(c.teks)}"</span>
+               <div class="catatan-aksi">
+                 <button type="button" data-aksi="edit">Edit</button>
+                 <button type="button" data-aksi="hapus">Hapus</button>
+               </div>
+             </li>`).join("")
+      : '<li class="kosong">Belum ada catatan.</li>';
+  }
+
+  $("daftar-catatan").addEventListener("click", async (e) => {
+    const tombol = e.target.closest("button[data-aksi]");
+    if (!tombol) return;
+    const li = tombol.closest("li");
+    const pk = Number(li.dataset.pk);
+    const url = CATATAN_DETAIL.replace("/0/", `/${pk}/`);
+
+    if (tombol.dataset.aksi === "edit") { sedangEdit = pk; renderCatatan(); return; }
+    if (tombol.dataset.aksi === "batal") { sedangEdit = null; renderCatatan(); return; }
+
+    if (tombol.dataset.aksi === "simpan") {
+      const teks = li.querySelector(".catatan-edit").value.trim();
+      const res = await kirim(url, "PUT", { teks });
+      if (!res) return;
+      if (!res.ok) return alert((await res.json()).error || "Gagal menyimpan.");
+      const baru = (await res.json()).catatan;
+      catatan = catatan.map((c) => (c.pk === pk ? baru : c));
+      sedangEdit = null;
+      renderCatatan();
+    }
+
+    if (tombol.dataset.aksi === "hapus") {
+      if (!confirm("Hapus catatan ini?")) return;
+      const res = await kirim(url, "DELETE");
+      if (!res || !res.ok) return;
+      catatan = catatan.filter((c) => c.pk !== pk);
+      renderCatatan();
+    }
+  });
+
+  $("form-catatan").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const teks = $("input-catatan").value.trim();
+    if (!teks) return;
+    const res = await kirim(CATATAN_URL, "POST", { teks, titik: terpilih ? terpilih.pk : null });
+    if (!res) return;
+    if (!res.ok) return alert((await res.json()).error || "Gagal menyimpan.");
+    catatan.unshift((await res.json()).catatan);
+    $("input-catatan").value = "";
+    renderCatatan();
+  });
+
+  // ---------- start ----------
+  muatCatatan();
+  muatTitik();
+})();
+</script>
+{% endblock %}

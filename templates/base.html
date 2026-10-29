@@ -29,8 +29,8 @@
                     <img src="{% static 'images/icon-forum-active.png' %}" class="nav-icon icon-active">
                     Forum Tebengan
                 </a>
-                <a href="#" class="nav-item {% if '/peta/' in request.path %}active{% endif %}">
-                    <img src="{% static 'images/icon-map.png' %}" class="nav-icon icon-default">
+                <a href="{% url 'maps:halaman' %}" class="nav-item {% if '/maps/' in request.path %}active{% endif %}">
+                    <img src="{% static 'images/icon-map.png' %}" class="nav-icon"> 
                     <img src="{% static 'images/icon-map-active.png' %}" class="nav-icon icon-active">
                     Peta Titik Kumpul
                 </a>

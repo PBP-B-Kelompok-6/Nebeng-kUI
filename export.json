@@ -1,0 +1,893 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.4 2390de5a",
+  "osm3s": {
+    "timestamp_osm_base": "2026-10-29T22:19:55Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+    {
+      "type": "node",
+      "id": 2063493247,
+      "lat": -6.3483498,
+      "lon": 106.8297711,
+      "tags": {
+        "bench": "yes",
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "Asrama UI",
+        "public_transport": "platform",
+        "shelter": "yes",
+        "wheelchair": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 2063493252,
+      "lat": -6.3681218,
+      "lon": 106.8315993,
+      "tags": {
+        "bench": "yes",
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "Balairung",
+        "public_transport": "platform",
+        "shelter": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 2063493256,
+      "lat": -6.3594526,
+      "lon": 106.8258186,
+      "tags": {
+        "bench": "yes",
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "Fakultas Ekonomi dan Bisnis",
+        "public_transport": "platform",
+        "shelter": "yes",
+        "wheelchair": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 2063493261,
+      "lat": -6.3596138,
+      "lon": 106.8256942,
+      "tags": {
+        "bench": "yes",
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "Fakultas Ekonomi dan Bisnis",
+        "public_transport": "platform",
+        "shelter": "yes",
+        "wheelchair": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 2063493265,
+      "lat": -6.3648982,
+      "lon": 106.8322269,
+      "tags": {
+        "bench": "yes",
+        "bin": "yes",
+        "bus": "yes",
+        "highway": "bus_stop",
+        "lit": "yes",
+        "name": "Fakultas Hukum",
+        "public_transport": "platform",
+        "shelter": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 2063493269,
+      "lat": -6.361182,
+      "lon": 106.8294626,
+      "tags": {
+        "bench": "yes",
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "Fakultas Ilmu Pengetahuan Budaya",
+        "public_transport": "platform",
+        "shelter": "yes",
+        "wheelchair": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 2063493272,
+      "lat": -6.3717018,
+      "lon": 106.8293622,
+      "tags": {
+        "bench": "yes",
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "Fakultas Kesehatan Masyarakat",
+        "public_transport": "platform",
+        "shelter": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 2063493277,
+      "lat": -6.3618297,
+      "lon": 106.8301695,
+      "tags": {
+        "bench": "yes",
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "Fakultas Ilmu Sosial dan Ilmu Politik",
+        "public_transport": "platform",
+        "shelter": "yes",
+        "wheelchair": "limited"
+      }
+    },
+    {
+      "type": "node",
+      "id": 2063493281,
+      "lat": -6.3714557,
+      "lon": 106.8291036,
+      "tags": {
+        "bench": "yes",
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "Fakultas Kesehatan Masyarakat",
+        "public_transport": "platform",
+        "shelter": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 2063493284,
+      "lat": -6.3696727,
+      "lon": 106.8259729,
+      "tags": {
+        "bench": "yes",
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "Fakultas Matematika dan IPA",
+        "public_transport": "platform",
+        "shelter": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 2063493288,
+      "lat": -6.3698443,
+      "lon": 106.8257566,
+      "tags": {
+        "bench": "yes",
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "Fakultas Matematika dan IPA",
+        "public_transport": "platform",
+        "shelter": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 2063493292,
+      "lat": -6.3629161,
+      "lon": 106.8312015,
+      "tags": {
+        "bench": "yes",
+        "bus": "yes",
+        "check_date:shelter": "2022-04-26",
+        "highway": "bus_stop",
+        "name": "Fakultas Psikologi",
+        "public_transport": "platform",
+        "shelter": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 2063493295,
+      "lat": -6.361283,
+      "lon": 106.8233114,
+      "tags": {
+        "bench": "yes",
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "Fakultas Teknik",
+        "public_transport": "platform",
+        "shelter": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 2063493299,
+      "lat": -6.3535289,
+      "lon": 106.8318182,
+      "tags": {
+        "bench": "yes",
+        "bus": "yes",
+        "departures_board": "no",
+        "highway": "bus_stop",
+        "name": "Universitas Indonesia",
+        "network": "Transjakarta",
+        "network:wikidata": "Q1671143",
+        "public_transport": "platform",
+        "route_ref": "4B",
+        "shelter": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 2063493308,
+      "lat": -6.3655978,
+      "lon": 106.8320129,
+      "tags": {
+        "bench": "yes",
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "Masjid UI",
+        "public_transport": "platform",
+        "shelter": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 2063493312,
+      "lat": -6.3667604,
+      "lon": 106.8240206,
+      "tags": {
+        "bench": "yes",
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "Pusgiwa",
+        "public_transport": "platform",
+        "shelter": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 2063493316,
+      "lat": -6.3682275,
+      "lon": 106.8317943,
+      "tags": {
+        "bench": "yes",
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "Pondok Cina",
+        "public_transport": "platform",
+        "shelter": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 2063493320,
+      "lat": -6.3659523,
+      "lon": 106.8218006,
+      "tags": {
+        "bench": "yes",
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "Program Vokasi",
+        "public_transport": "platform",
+        "shelter": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 2063493325,
+      "lat": -6.3661131,
+      "lon": 106.8216544,
+      "tags": {
+        "bench": "yes",
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "Program Vokasi",
+        "public_transport": "platform",
+        "shelter": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 2063493332,
+      "lat": -6.3610642,
+      "lon": 106.8317204,
+      "tags": {
+        "bench": "yes",
+        "bin": "yes",
+        "bus": "yes",
+        "check_date:shelter": "2022-04-26",
+        "highway": "bus_stop",
+        "lit": "yes",
+        "name": "Stasiun KRL Universitas Indonesia",
+        "public_transport": "platform",
+        "shelter": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 2372928209,
+      "lat": -6.3604315,
+      "lon": 106.831782,
+      "tags": {
+        "addr:city": "Beji Timur, Depok, West Java",
+        "addr:country": "ID",
+        "addr:postcode": "16424",
+        "addr:street": "Jalan Stasiun UI",
+        "alt_name": "Stasiun Universitas Indonesia",
+        "ele": "74",
+        "name": "Universitas Indonesia",
+        "name:th": "มหาวิทยาลัยอินโดนีเซีย",
+        "network": "KAI Commuter",
+        "network:wikidata": "Q12501611",
+        "operator": "KAI Commuter",
+        "operator:website": "https://www.kci.id",
+        "operator:wikidata": "Q12501611",
+        "public_transport": "station",
+        "railway": "station",
+        "railway:ref": "UI",
+        "train": "yes",
+        "wheelchair": "yes",
+        "wikidata": "Q3249109",
+        "wikimedia_commons": "File:Stasiun Universitas Indonesia.jpg",
+        "wikipedia": "id:Stasiun Universitas Indonesia"
+      }
+    },
+    {
+      "type": "node",
+      "id": 2995287614,
+      "lat": -6.3670147,
+      "lon": 106.8244835,
+      "tags": {
+        "bench": "yes",
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "SOR",
+        "public_transport": "platform",
+        "shelter": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 4149398980,
+      "lat": -6.3690593,
+      "lon": 106.8320844,
+      "tags": {
+        "addr:city": "Depok",
+        "addr:country": "ID",
+        "addr:district": "Beji",
+        "addr:housenumber": "1",
+        "addr:postcode": "16421",
+        "addr:province": "Jawa Barat",
+        "addr:street": "Jalan Stasiun Pondok Cina",
+        "ele": "74",
+        "name": "Pondok Cina",
+        "name:th": "ปนดกจีนา",
+        "network": "KAI Commuter",
+        "network:wikidata": "Q12501611",
+        "operator": "KAI Commuter",
+        "operator:website": "https://www.kci.id",
+        "operator:wikidata": "Q12501611",
+        "public_transport": "station",
+        "railway": "station",
+        "railway:ref": "PCN",
+        "train": "yes",
+        "wikidata": "Q2355457",
+        "wikipedia": "id:Stasiun Pondok Cina"
+      }
+    },
+    {
+      "type": "node",
+      "id": 6869569987,
+      "lat": -6.360829,
+      "lon": 106.8224803,
+      "tags": {
+        "access": "yes",
+        "access:conditional": "no @ (Mo-Fr 23:00-05:00; Sa 18:00-05:00; Su; PH)",
+        "barrier": "gate",
+        "name": "Gerbang Kutek 1"
+      }
+    },
+    {
+      "type": "node",
+      "id": 8581458483,
+      "lat": -6.3608667,
+      "lon": 106.8224726,
+      "tags": {
+        "access": "no",
+        "barrier": "gate",
+        "motorcar": "no",
+        "name": "Gerbang Kutek 2"
+      }
+    },
+    {
+      "type": "node",
+      "id": 9441757217,
+      "lat": -6.3705416,
+      "lon": 106.8336046,
+      "tags": {
+        "bench": "yes",
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "Halte Pondok Cina",
+        "public_transport": "platform",
+        "shelter": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 9559744217,
+      "lat": -6.3638494,
+      "lon": 106.833632,
+      "tags": {
+        "bench": "no",
+        "bin": "no",
+        "bus": "yes",
+        "highway": "bus_stop",
+        "public_transport": "platform",
+        "shelter": "no"
+      }
+    },
+    {
+      "type": "node",
+      "id": 9559744417,
+      "lat": -6.363811,
+      "lon": 106.8338663,
+      "tags": {
+        "bench": "no",
+        "bin": "no",
+        "bus": "yes",
+        "highway": "bus_stop",
+        "public_transport": "platform",
+        "shelter": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 9559774317,
+      "lat": -6.3723049,
+      "lon": 106.8332051,
+      "tags": {
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "Margo City",
+        "public_transport": "platform",
+        "shelter": "no"
+      }
+    },
+    {
+      "type": "node",
+      "id": 9559774417,
+      "lat": -6.3599844,
+      "lon": 106.8332346,
+      "tags": {
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "Evecio Apartemen",
+        "public_transport": "platform",
+        "shelter": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 9559774418,
+      "lat": -6.3601087,
+      "lon": 106.8330527,
+      "tags": {
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "Apartemen Melati",
+        "public_transport": "platform",
+        "shelter": "no"
+      }
+    },
+    {
+      "type": "node",
+      "id": 9560069119,
+      "lat": -6.3524436,
+      "lon": 106.832433,
+      "tags": {
+        "highway": "bus_stop",
+        "name": "Halte Universitas Indonesia",
+        "operator": "PT Transjakarta",
+        "public_transport": "platform",
+        "shelter": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 9560069917,
+      "lat": -6.3503717,
+      "lon": 106.832765,
+      "tags": {
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "Syibi",
+        "network": "Transjakarta",
+        "network:wikidata": "Q1671143",
+        "operator": "PT Transjakarta",
+        "public_transport": "platform",
+        "route_ref": "4B",
+        "shelter": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 9994083725,
+      "lat": -6.3675666,
+      "lon": 106.8204284,
+      "tags": {
+        "access:conditional": "yes @ (Mo-Fr 05:00-23:00); no @ (Mo-Fr23:00-05:00); no @ (sa 18:00-06:00); no @ sa, su, ph",
+        "barrier": "gate",
+        "motor_vehicle": "yes",
+        "motorcar": "no",
+        "motorcycle": "yes",
+        "name": "Pintu Masuk Kukel",
+        "opening_hours": "Mo-Sa 06:00-18.00"
+      }
+    },
+    {
+      "type": "node",
+      "id": 11733087512,
+      "lat": -6.3700605,
+      "lon": 106.8308629,
+      "tags": {
+        "bench": "yes",
+        "bin": "yes",
+        "highway": "bus_stop",
+        "name": "Rumpun Ilmu Kesehatan",
+        "public_transport": "platform",
+        "shelter": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 11733087513,
+      "lat": -6.3701292,
+      "lon": 106.8310607,
+      "tags": {
+        "bench": "yes",
+        "bin": "yes",
+        "highway": "bus_stop",
+        "name": "Rumpun Ilmu Kesehatan",
+        "public_transport": "platform",
+        "shelter": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 11733087527,
+      "lat": -6.3647912,
+      "lon": 106.8320505,
+      "tags": {
+        "highway": "bus_stop",
+        "name": "Fakultas Hukum",
+        "public_transport": "platform"
+      }
+    },
+    {
+      "type": "node",
+      "id": 11733087530,
+      "lat": -6.3609966,
+      "lon": 106.8314946,
+      "tags": {
+        "highway": "bus_stop",
+        "name": "Stasiun KRL Universitas Indonesia",
+        "public_transport": "platform"
+      }
+    },
+    {
+      "type": "node",
+      "id": 11733087534,
+      "lat": -6.3534679,
+      "lon": 106.8316609,
+      "tags": {
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "Resimen Mahasiswa",
+        "public_transport": "platform"
+      }
+    },
+    {
+      "type": "node",
+      "id": 11733087536,
+      "lat": -6.3534666,
+      "lon": 106.8318164,
+      "tags": {
+        "bench": "yes",
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "Resimen Mahasiswa",
+        "public_transport": "platform",
+        "shelter": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 11733783105,
+      "lat": -6.3709535,
+      "lon": 106.8271387,
+      "tags": {
+        "bench": "yes",
+        "highway": "bus_stop",
+        "name": "Fakultas Ilmu Keperawatan",
+        "public_transport": "platform",
+        "shelter": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 11733783106,
+      "lat": -6.3711028,
+      "lon": 106.8269643,
+      "tags": {
+        "bench": "yes",
+        "highway": "bus_stop",
+        "name": "Fakultas Ilmu Keperawatan",
+        "public_transport": "platform",
+        "shelter": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 11733891622,
+      "lat": -6.3611205,
+      "lon": 106.8297189,
+      "tags": {
+        "bench": "yes",
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "Fakultas Ilmu Pengetahuan Budaya",
+        "public_transport": "platform",
+        "shelter": "yes",
+        "wheelchair": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 11733891637,
+      "lat": -6.3610546,
+      "lon": 106.8231918,
+      "tags": {
+        "bench": "yes",
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "Fakultas Teknik",
+        "public_transport": "platform",
+        "shelter": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 11921837466,
+      "lat": -6.348726,
+      "lon": 106.8132712,
+      "tags": {
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "Jalan Haji Mohammed Nalim",
+        "network": "Transjakarta",
+        "network:wikidata": "Q1671143",
+        "public_transport": "platform"
+      }
+    },
+    {
+      "type": "node",
+      "id": 11921871872,
+      "lat": -6.3562816,
+      "lon": 106.8127087,
+      "tags": {
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "Gang Haji Benih Srengseng Sawah",
+        "network": "Transjakarta",
+        "network:wikidata": "Q1671143",
+        "public_transport": "platform"
+      }
+    },
+    {
+      "type": "node",
+      "id": 11921871874,
+      "lat": -6.3523492,
+      "lon": 106.8158389,
+      "tags": {
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "Jalan Haji Lele",
+        "network": "Transjakarta",
+        "network:wikidata": "Q1671143",
+        "public_transport": "platform"
+      }
+    },
+    {
+      "type": "node",
+      "id": 11921871876,
+      "lat": -6.3522734,
+      "lon": 106.8175596,
+      "tags": {
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "SMP PGRI 3 Jakarta",
+        "network": "Transjakarta",
+        "network:wikidata": "Q1671143",
+        "public_transport": "platform"
+      }
+    },
+    {
+      "type": "node",
+      "id": 11921871878,
+      "lat": -6.3501588,
+      "lon": 106.8198064,
+      "tags": {
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "TPU Srengseng Sawah",
+        "network": "Transjakarta",
+        "network:wikidata": "Q1671143",
+        "public_transport": "platform"
+      }
+    },
+    {
+      "type": "way",
+      "id": 113545592,
+      "center": {
+        "lat": -6.3676104,
+        "lon": 106.8270507
+      },
+      "tags": {
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Pool Bis Kuning",
+        "public_transport": "station"
+      }
+    },
+    {
+      "type": "way",
+      "id": 120787787,
+      "center": {
+        "lat": -6.3611826,
+        "lon": 106.8263735
+      },
+      "tags": {
+        "amenity": "library",
+        "building": "university",
+        "building:roof": "tile",
+        "building:structure": "reinforced_masonry",
+        "building:use": "education",
+        "building:walls": "brick",
+        "name": "Perpustakaan FEB UI"
+      }
+    },
+    {
+      "type": "way",
+      "id": 297131484,
+      "center": {
+        "lat": -6.3652396,
+        "lon": 106.8297692
+      },
+      "tags": {
+        "addr:city": "Depok",
+        "addr:postcode": "16424",
+        "addr:street": "Jl. Lingkar Kampus Raya",
+        "alt_name": "Perpus UI",
+        "amenity": "library",
+        "building": "university",
+        "int_name": "Central Library University of Indonesia",
+        "name": "Perpustakaan Pusat UI",
+        "wikidata": "Q12479607",
+        "wikipedia": "en:University of Indonesia Central Library"
+      }
+    },
+    {
+      "type": "way",
+      "id": 401969868,
+      "center": {
+        "lat": -6.360529,
+        "lon": 106.8260881
+      },
+      "tags": {
+        "addr:city": "Depok, West Java",
+        "addr:postcode": "16424",
+        "addr:street": "Jalan Prof. Dr. Sudjono D Pusponegoro",
+        "amenity": "university",
+        "name": "Universitas Indonesia",
+        "name:en": "University of Indonesia",
+        "name:id": "Universitas Indonesia",
+        "name:th": "มหาวิทยาลัยอินโดนีเซีย",
+        "operator": "Universitas Indonesia",
+        "short_name": "UI",
+        "website": "https://www.ui.ac.id/",
+        "wheelchair": "yes",
+        "wikidata": "Q534515",
+        "wikipedia": "id:Universitas Indonesia"
+      }
+    },
+    {
+      "type": "way",
+      "id": 401977088,
+      "center": {
+        "lat": -6.3685077,
+        "lon": 106.8331233
+      },
+      "tags": {
+        "addr:city": "Depok",
+        "addr:district": "Beji",
+        "addr:housenumber": "100",
+        "addr:postcode": "16424",
+        "addr:province": "Jawa Barat",
+        "addr:street": "Jalan Raya Margonda",
+        "amenity": "university",
+        "name": "Universitas Gunadarma Kampus D",
+        "operator": "Universitas Gunadarma"
+      }
+    },
+    {
+      "type": "way",
+      "id": 401977091,
+      "center": {
+        "lat": -6.3529851,
+        "lon": 106.8372322
+      },
+      "tags": {
+        "amenity": "university",
+        "name": "Kampus H Universitas Gunadarma",
+        "operator": "Universitas Gunadarma"
+      }
+    },
+    {
+      "type": "way",
+      "id": 499800552,
+      "center": {
+        "lat": -6.3539713,
+        "lon": 106.8130657
+      },
+      "tags": {
+        "addr:city": "DKI Jakarta",
+        "addr:full": "Jalan Srengseng Sawah",
+        "addr:postcode": "12630",
+        "addr:street": "Jalan Muhammad Kahfi II",
+        "amenity": "university",
+        "evacuation_center": "no",
+        "name": "Institut Sains dan Tehnologi Nasional",
+        "operator:type": "private",
+        "source": "HOT_InAWARESurvey_2017"
+      }
+    },
+    {
+      "type": "way",
+      "id": 816679673,
+      "center": {
+        "lat": -6.3720375,
+        "lon": 106.826102
+      },
+      "tags": {
+        "addr:city": "Depok, West Java",
+        "amenity": "library",
+        "building": "yes",
+        "building:levels": "5",
+        "layer": "0",
+        "max_level": "3",
+        "min_level": "-1",
+        "name": "Gedung Y, Perpustakaan",
+        "ref": "Y"
+      }
+    },
+    {
+      "type": "way",
+      "id": 972544080,
+      "center": {
+        "lat": -6.3716852,
+        "lon": 106.8245905
+      },
+      "tags": {
+        "addr:city": "Depok",
+        "addr:postcode": "16425",
+        "addr:street": "Jl. Prof. Dr. G.A Siwabessy",
+        "amenity": "university",
+        "name": "Politeknik Negeri Jakarta",
+        "note": "separate institution, not part of Universitas Indonesia since 1998",
+        "short_name": "PNJ",
+        "website": "https://pnj.ac.id/",
+        "wikidata": "Q13405291",
+        "wikipedia": "id:Politeknik Negeri Jakarta"
+      }
+    }
+  ]
+}

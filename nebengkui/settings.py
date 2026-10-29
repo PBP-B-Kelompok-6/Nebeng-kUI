@@ -44,11 +44,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'users',
+    'maps',
     'reservasi',
     'forum',
 ]
 
 AUTH_USER_MODEL = 'users.User'
+
+#Referer untuk minta data ke OpenStreetMap
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
