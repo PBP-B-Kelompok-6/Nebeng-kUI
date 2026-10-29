@@ -2,7 +2,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views.generic import CreateView, DeleteView, DetailView, ListView
-
+from django.contrib import messages
+from django.shortcuts import redirect
 from .forms import RidePostForm
 from .models import RidePost
 from django.db.models import Count, Prefetch, Q
@@ -74,6 +75,19 @@ class PostCreateView(LoginRequiredMixin, CreateView):
     template_name = "forum/post_form.html"
     success_url = reverse_lazy("forum:feed")
 
+    # 1. VALIDASI: Cek kendaraan sebelum memproses request apapun
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated and not request.user.vehicles.exists():
+            messages.error(request, "Kamu harus mendaftarkan kendaraan terlebih dahulu sebelum bisa menawarkan tumpangan.")
+            return redirect("users:profile")  # Sesuaikan URL name ini dengan profilmu
+        return super().dispatch(request, *args, **kwargs)
+
+    # 2. INJEKSI USER: Kirim data user ke dalam form
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+    
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)

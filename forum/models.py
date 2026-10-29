@@ -12,6 +12,7 @@ class RidePost(models.Model):
     )
     pickup_point = models.CharField(max_length=200)
     destination = models.CharField(max_length=200)
+    kendaraan = models.ForeignKey('users.Vehicle', on_delete=models.CASCADE, null=True, blank=True)
     departure_time = models.DateTimeField()
     max_quota = models.PositiveSmallIntegerField(default=1)
     filled_quota = models.PositiveSmallIntegerField(default=0)
