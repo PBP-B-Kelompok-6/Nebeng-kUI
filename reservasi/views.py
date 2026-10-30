@@ -132,7 +132,19 @@ def kirim_pesan(request, reservasi_id):
     if request.method == 'POST':
         teks = request.POST.get('teks_pesan')
         if teks and teks.strip():
-            PesanChat.objects.create(reservasi=reservasi, pengirim=request.user, teks=teks.strip())
+            pesan = PesanChat.objects.create(reservasi=reservasi, pengirim=request.user, teks=teks.strip())
+            
+            # Jika AJAX, kirim data pesan baru sebagai JSON
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({
+                    'status': 'success',
+                    'pesan': {
+                        'id': pesan.id,
+                        'teks': pesan.teks,
+                        'pengirim': pesan.pengirim.username,
+                        'timestamp': pesan.timestamp.strftime('%H:%M')
+                    }
+                })
     return _chat_redirect(reservasi_id)
 
 
@@ -146,7 +158,12 @@ def edit_pesan(request, pesan_id):
             if teks_baru and teks_baru.strip():
                 pesan.teks = teks_baru.strip()
                 pesan.save()
+
+                if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                    return JsonResponse({'status': 'success', 'teks_baru': pesan.teks})
         else:
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'status': 'error', 'message': 'Hanya pesan terakhir yang bisa diedit.'}, status=400)
             messages.error(request, "Hanya pesan terakhir yang bisa diedit.")
     return _chat_redirect(pesan.reservasi_id)
 
@@ -159,7 +176,11 @@ def hapus_pesan(request, pesan_id):
         pesan_terakhir = PesanChat.objects.filter(reservasi=pesan.reservasi).latest('timestamp')
         if pesan == pesan_terakhir:
             pesan.delete()
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'status': 'success'})
         else:
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'status': 'error', 'message': 'Hanya pesan terakhir yang bisa ditarik.'}, status=400)
             messages.error(request, "Hanya pesan terakhir yang bisa ditarik.")
     return _chat_redirect(rid)
 
@@ -185,9 +206,13 @@ def selesaikan_reservasi(request, reservasi_id):
                 reason=f"Menyelesaikan tebengan dengan {reservasi.penumpang.username}",
                 reference=f"reservation:{reservasi.id}"
             )
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'status': 'success', 'message': 'Perjalanan selesai!'})
             
             messages.success(request, f"Perjalanan selesai! Kamu mendapatkan {POINTS_PER_PASSENGER} poin reward.")
         else:
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'status': 'error', 'message': 'Kamu tidak memiliki hak.'}, status=403)
             messages.error(request, "Kamu tidak memiliki hak untuk menyelesaikan perjalanan ini.")
             
     return redirect(f"{reverse('reservasi:show_reservasi')}?id={reservasi_id}")
