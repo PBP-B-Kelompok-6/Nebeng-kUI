@@ -357,9 +357,41 @@
     renderCatatan();
   });
 
+  const urlParams = new URLSearchParams(window.location.search);
+  const startLat = parseFloat(urlParams.get('start_lat'));
+  const startLon = parseFloat(urlParams.get('start_lon'));
+  const endLat = parseFloat(urlParams.get('end_lat'));
+  const endLon = parseFloat(urlParams.get('end_lon'));
+
+  if (!isNaN(startLat) && !isNaN(startLon) && !isNaN(endLat) && !isNaN(endLon)) {
+    // 1. Icon Badge Khusus Titik Jemput (Hijau)
+    const iconJemput = L.divIcon({
+      html: `<div style="background: #ffffff; color: #0F172A; padding: 6px 12px; border-radius: 20px; font-weight: 800; border: 2px solid #10B981; box-shadow: 0 4px 10px rgba(0,0,0,0.3); font-size: 12px; white-space: nowrap;">📍 Titik Jemput</div>`,
+      className: '',
+      iconAnchor: [50, 15]
+    });
+
+    // 2. Icon Badge Khusus Titik Tujuan (Merah)
+    const iconTujuan = L.divIcon({
+      html: `<div style="background: #ffffff; color: #0F172A; padding: 6px 12px; border-radius: 20px; font-weight: 800; border: 2px solid #EF4444; box-shadow: 0 4px 10px rgba(0,0,0,0.3); font-size: 12px; white-space: nowrap;">🏁 Titik Tujuan</div>`,
+      className: '',
+      iconAnchor: [50, 15]
+    });
+
+    // 3. Tambahkan Marker dengan Z-Index Tinggi agar Selalu di Atas Pin Biru
+    L.marker([startLat, startLon], { icon: iconJemput, zIndexOffset: 1000 }).addTo(map);
+    L.marker([endLat, endLon], { icon: iconTujuan, zIndexOffset: 1000 }).addTo(map);
+
+    // 4. Fokuskan Peta untuk Mencakup Kedua Titik
+    map.fitBounds([
+      [startLat, startLon],
+      [endLat, endLon]
+    ], { padding: [70, 70] });
+  }
   // ---------- start ----------
   muatCatatan();
   muatTitik();
 })();
+
 </script>
 {% endblock %}
