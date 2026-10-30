@@ -1054,3 +1054,101 @@ footer {
 .vehicle-tab.active .vehicle-tab-count {
     background: rgba(255, 255, 255, 0.25);
 }
+
+/* ===== TAMBAHAN AJAX ===== */
+
+/* Elemen dengan atribut hidden harus benar-benar hilang, walau punya display sendiri */
+[hidden] {
+    display: none !important;
+}
+
+.auth-error:empty {
+    display: none;
+}
+
+.is-loading {
+    opacity: 0.55;
+    pointer-events: none;
+    transition: opacity 0.2s;
+}
+
+/* --- MODAL (atribut popover) --- */
+.modal {
+    position: fixed;
+    inset: 0;
+    margin: auto;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    width: min(480px, 92vw);
+    padding: 28px;
+    border: 1px solid #eaeaea;
+    border-radius: 20px;
+    background: #fff;
+    color: #1F2937;
+    box-shadow: 0 20px 60px rgba(92, 0, 230, 0.2);
+}
+
+.modal::backdrop {
+    background: rgba(31, 41, 55, 0.45);
+}
+
+.modal h2 {
+    margin-bottom: 20px;
+    font-size: 22px;
+}
+
+/* Browser tanpa dukungan popover: modal disembunyikan, halaman biasa yang dipakai */
+@supports not selector(:popover-open) {
+    .modal {
+        display: none;
+    }
+}
+
+button.btn-cancel {
+    padding: 0;
+    border: none;
+    background: none;
+    font: inherit;
+    cursor: pointer;
+}
+
+/* --- TOAST --- */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: min(360px, calc(100vw - 40px));
+}
+
+.toast {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 14px 18px;
+    border: 1px solid #eaeaea;
+    border-left: 4px solid #5c00e6;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 10px 30px rgba(92, 0, 230, 0.15);
+    font-size: 14px;
+}
+
+.toast strong {
+    font-size: 14px;
+}
+
+.toast span {
+    color: #4b5563;
+}
+
+.toast-success {
+    border-left-color: #047857;
+}
+
+.toast-error {
+    border-left-color: #b91c1c;
+}

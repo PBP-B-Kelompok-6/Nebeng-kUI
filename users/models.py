@@ -142,6 +142,10 @@ class Redemption(models.Model):
     def __str__(self):
         return f"{self.user} {self.points} poin ({self.get_status_display()})"
 
+    @property
+    def amount_display(self):
+        return "Rp " + f"{self.amount_rupiah:,}".replace(",", ".")
+
 class RewardLog(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,

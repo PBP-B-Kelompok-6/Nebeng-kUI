@@ -14,6 +14,19 @@ def format_rupiah(amount):
     return "Rp " + f"{amount:,}".replace(",", ".")
 
 
+def eco_state(user):
+    """Angka-angka kartu Eco-Points, dipakai halaman profil dan JSON."""
+    remainder = user.reward_points % POINTS_PER_EXCHANGE
+    return {
+        "reward_points": user.reward_points,
+        "balance": user.balance,
+        "balance_display": format_rupiah(user.balance),
+        "exchange_lots": user.reward_points // POINTS_PER_EXCHANGE,
+        "points_to_next": POINTS_PER_EXCHANGE - remainder,
+        "progress_pct": remainder * 100 // POINTS_PER_EXCHANGE,
+    }
+
+
 def exchange_points(user, lots):
     """Tukar `lots` paket (kelipatan 100 poin) menjadi saldo.
 

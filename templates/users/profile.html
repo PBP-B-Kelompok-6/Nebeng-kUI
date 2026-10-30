@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="profile-page">
-    {% for message in messages %}
-        <div class="auth-message {% if message.tags == 'error' %}auth-message-error{% endif %}">{{ message }}</div>
-    {% endfor %}  
+  {% for message in messages %}
+    <div class="auth-message {% if message.tags == 'error' %}auth-message-error{% endif %}">{{ message }}</div>
+  {% endfor %}
 
   <section class="profile-card">
     <div class="profile-avatar">
-        <img src="{{ user.profile_picture }}" alt="Foto {{ user.username }}">
+      <img src="{{ user.profile_picture }}" alt="Foto {{ user.username }}">
     </div>
 
     <div class="profile-main">
@@ -43,11 +43,11 @@
       <div class="eco-stats">
         <div class="eco-stat">
           <span class="eco-label">Total Eco-Points</span>
-          <strong class="eco-value">{{ user.reward_points }} <small>Pts</small></strong>
+          <strong class="eco-value"><span id="eco-points-value">{{ user.reward_points }}</span> <small>Pts</small></strong>
         </div>
         <div class="eco-stat">
           <span class="eco-label">Saldo</span>
-          <strong class="eco-value">Rp {{ user.balance|floatformat:"0g" }}</strong>
+          <strong class="eco-value" id="eco-balance">{{ balance_display }}</strong>
         </div>
         <div class="eco-stat">
           <span class="eco-label">Tebengan selesai</span>
@@ -61,88 +61,57 @@
           Rp {{ rupiah_per_exchange|floatformat:"0g" }} saldo.
         </p>
 
-        {% if exchange_lots %}
-          <form method="post" action="{% url 'users:redeem' %}" class="eco-exchange">
+        <div id="eco-exchange-box" {% if not exchange_lots %}hidden{% endif %}>
+          <form id="exchange-form" method="post" action="{% url 'users:redeem' %}" class="eco-exchange">
             {% csrf_token %}
             <label for="exchange-lots">Jumlah paket</label>
             <input type="number" id="exchange-lots" name="lots"
-                  min="1" max="{{ exchange_lots }}" value="1" required>
+                   min="1" max="{{ exchange_lots }}" value="1" required>
             <button type="submit" class="btn-small btn-small-light">Tukar ke Saldo</button>
           </form>
-          <p class="eco-note">Maksimal {{ exchange_lots }} paket dengan poinmu sekarang.</p>
-        {% else %}
-          <p class="eco-note">Butuh {{ points_to_next }} poin lagi untuk penukaran pertama.</p>
-          <div class="eco-progress"><span style="width: {{ progress_pct }}%"></span></div>
-        {% endif %}
+          <p class="eco-note" id="exchange-max-note">Maksimal {{ exchange_lots }} paket dengan poinmu sekarang.</p>
+        </div>
+
+        <div id="eco-progress-box" {% if exchange_lots %}hidden{% endif %}>
+          <p class="eco-note" id="points-to-next-note">Butuh {{ points_to_next }} poin lagi untuk penukaran berikutnya.</p>
+          <div class="eco-progress"><span id="progress-bar" style="width: {{ progress_pct }}%"></span></div>
+        </div>
       </div>
     </div>
 
-    {% if recent_exchanges %}
-      <ul class="redemption-list">
-        {% for r in recent_exchanges %}
-        <li>
-          <span>{{ r.points }} poin → Rp {{ r.amount_rupiah|floatformat:"0g" }}</span>
-          <span class="eco-date">{{ r.created_at|date:"d M Y, H:i" }}</span>
-        </li>
-        {% endfor %}
-      </ul>
-    {% endif %}
+    <ul class="redemption-list" id="redemption-list" {% if not recent_exchanges %}hidden{% endif %}>
+      {% for r in recent_exchanges %}
+      <li>
+        <span>{{ r.points }} poin → {{ r.amount_display }}</span>
+        <span class="eco-date">{{ r.created_at|date:"d M Y, H:i" }}</span>
+      </li>
+      {% endfor %}
+    </ul>
   </section>
 
   <section class="vehicle-section" id="kendaraan">
     <div class="section-head">
       <h2>Kendaraan Terdaftar</h2>
-      <a href="{% url 'users:vehicle_add' %}" class="btn-small btn-small-primary">+ Tambah Kendaraan</a>
+      <a href="{% url 'users:vehicle_add' %}" class="btn-small btn-small-primary" id="vehicle-add-btn">+ Tambah Kendaraan</a>
     </div>
 
-    {% if vehicle_total %}
-      <nav class="vehicle-tabs" id="vehicle-tabs" aria-label="Filter jenis kendaraan">
-        {% for value, label, count in vehicle_tabs %}
-          <a href="{% url 'users:profile' %}{% if value %}?vehicle_type={{ value }}{% endif %}#kendaraan"
-            class="vehicle-tab {% if value == vehicle_filter %}active{% endif %}">
-            {{ label }} <span class="vehicle-tab-count">{{ count }}</span>
-          </a>
-        {% endfor %}
-      </nav>
-    {% endif %}
+    <nav class="vehicle-tabs" id="vehicle-tabs" aria-label="Filter jenis kendaraan" {% if not vehicle_total %}hidden{% endif %}>
+      {% for value, label, count in vehicle_tabs %}
+        <a href="{% url 'users:profile' %}{% if value %}?vehicle_type={{ value }}{% endif %}#kendaraan"
+           class="vehicle-tab {% if value == vehicle_filter %}active{% endif %}"
+           data-filter="{{ value }}">
+          {{ label }} <span class="vehicle-tab-count">{{ count }}</span>
+        </a>
+      {% endfor %}
+    </nav>
 
-    <div id="vehicle-list">
+    <div id="vehicle-list" data-filter="{{ vehicle_filter }}">
       {% include "users/_vehicle_list.html" %}
     </div>
-      </section>
-
+  </section>
 </div>
-<script>
-  (function () {
-    var tabs = document.getElementById("vehicle-tabs");
-    var list = document.getElementById("vehicle-list");
-    if (!tabs || !list) return;
-    var latest = 0;
 
-    tabs.addEventListener("click", function (e) {
-      var link = e.target.closest("a.vehicle-tab");
-      if (!link) return;
-      e.preventDefault();
-
-      var url = link.href;
-      var id = ++latest;
-      fetch(url, { headers: { "X-Requested-With": "XMLHttpRequest" } })
-        .then(function (res) {
-          // Sesi habis: server mengalihkan ke halaman login, jangan disisipkan ke daftar
-          if (!res.ok || res.redirected) throw new Error("gagal");
-          return res.text();
-        })
-        .then(function (html) {
-          if (id !== latest) return;            // abaikan respons yang sudah basi
-          list.innerHTML = html;
-          tabs.querySelectorAll(".vehicle-tab").forEach(function (t) {
-            t.classList.remove("active");
-          });
-          link.classList.add("active");
-          history.replaceState(null, "", url);
-        })
-        .catch(function () { window.location.href = url; });  // gagal: navigasi biasa
-    });
-  })();
-</script>
+{% include "users/_vehicle_modal.html" %}
+{% include "users/_toast.html" %}
+{% include "users/_profile_scripts.html" %}
 {% endblock content %}

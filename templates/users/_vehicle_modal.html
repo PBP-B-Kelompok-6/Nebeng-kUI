@@ -1,0 +1,21 @@
+<div id="vehicle-modal" class="modal" popover>
+  <form id="vehicle-form" method="post" action="{% url 'users:vehicle_add' %}">
+    {% csrf_token %}
+    <h2 id="vehicle-modal-title">Tambah Kendaraan</h2>
+
+    <p class="auth-error" data-error-for="__all__"></p>
+
+    {% for field in vehicle_form %}
+      <div class="auth-field">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        <p class="auth-error" data-error-for="{{ field.name }}"></p>
+      </div>
+    {% endfor %}
+
+    <div class="form-actions">
+      <button type="submit" class="btn-auth" id="vehicle-submit">Tambah</button>
+      <button type="button" class="btn-cancel" data-close-modal>Batal</button>
+    </div>
+  </form>
+</div>

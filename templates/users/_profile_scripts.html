@@ -1,0 +1,376 @@
+<script>
+(function () {
+  "use strict";
+
+  var URLS = {
+    login: "{% url 'users:login' %}",
+    vehicles: "{% url 'users:vehicles_json' %}",
+    vehicleCreate: "{% url 'users:vehicle_add_ajax' %}",
+    vehicleEdit: "{% url 'users:vehicle_edit_ajax' 0 %}",
+    vehicleDelete: "{% url 'users:vehicle_delete_ajax' 0 %}",
+    vehicleEditPage: "{% url 'users:vehicle_edit' 0 %}",
+    redeem: "{% url 'users:redeem_ajax' %}"
+  };
+
+  // ---------------------------------------------------------------- umum
+  function byId(id) { return document.getElementById(id); }
+
+  function withId(template, pk) {
+    return template.replace("/0/", "/" + pk + "/");
+  }
+
+  function makeEl(tag, className, text) {
+    var el = document.createElement(tag);
+    if (className) el.className = className;
+    if (text !== undefined) el.textContent = text;   // textContent: aman dari XSS
+    return el;
+  }
+
+  // Membaca nilai cookie, dipakai untuk mengambil token CSRF
+  function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+      var cookies = document.cookie.split(";");
+      for (var i = 0; i < cookies.length; i++) {
+        var cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + "=")) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+  function csrfToken() {
+    var field = document.querySelector("[name=csrfmiddlewaretoken]");
+    return getCookie("csrftoken") || (field ? field.value : "");
+  }
+
+  async function request(url, options) {
+    options = options || {};
+    var headers = Object.assign(
+      { "Accept": "application/json", "X-Requested-With": "XMLHttpRequest" },
+      options.headers || {}
+    );
+    var response = await fetch(
+      url,
+      Object.assign({}, options, { headers: headers, credentials: "same-origin" })
+    );
+    var data = await response.json().catch(function () { return {}; });
+    return { response: response, data: data };
+  }
+
+  function postOptions(body) {
+    return { method: "POST", headers: { "X-CSRFToken": csrfToken() }, body: body };
+  }
+
+  function failureMessage(result) {
+    return result.data.message ||
+      ("Terjadi kesalahan (status " + result.response.status + ").");
+  }
+
+  function goToLogin() {
+    showToast("Sesi berakhir", "Silakan login lagi.", "error");
+    setTimeout(function () {
+      window.location.href =
+        URLS.login + "?next=" + encodeURIComponent(window.location.pathname);
+    }, 1200);
+  }
+
+  // ------------------------------------------------------------ kendaraan
+  var list = byId("vehicle-list");
+  var tabs = byId("vehicle-tabs");
+  var modal = byId("vehicle-modal");
+  var form = byId("vehicle-form");
+  var currentFilter = list ? (list.dataset.filter || "") : "";
+  var latest = 0;
+  var supportsPopover = !!modal && typeof modal.showPopover === "function";
+
+  function emptyBlock() {
+    var box = makeEl("div", "vehicle-empty");
+    box.appendChild(makeEl(
+      "p", "",
+      currentFilter
+        ? "Tidak ada kendaraan dengan jenis ini."
+        : "Belum ada kendaraan yang terdaftar."
+    ));
+    return box;
+  }
+
+  // Markup harus sama dengan templates/users/_vehicle_list.html
+  function buildVehicleCard(item) {
+    var f = item.fields;
+    var card = makeEl("article", "vehicle-card");
+    card.dataset.pk = item.pk;
+    card.dataset.type = f.vehicle_type;
+    card.dataset.name = f.name;
+    card.dataset.plate = f.plate_number;
+    card.dataset.capacity = f.capacity;
+
+    card.appendChild(makeEl("div", "vehicle-icon", f.vehicle_type === "motor" ? "🏍️" : "🚗"));
+
+    var info = makeEl("div", "vehicle-info");
+    info.appendChild(makeEl("span", "vehicle-label", f.vehicle_type_display));
+    info.appendChild(makeEl("h3", "", f.name));
+    info.appendChild(makeEl("p", "vehicle-plate", f.plate_number));
+    info.appendChild(makeEl("p", "vehicle-meta", "Kapasitas: " + f.capacity + " kursi"));
+
+    var actions = makeEl("div", "vehicle-actions");
+    var edit = makeEl("a", "btn-small btn-small-outline", "Edit");
+    edit.href = withId(URLS.vehicleEditPage, item.pk);
+    edit.dataset.action = "edit";
+    var del = makeEl("button", "btn-small btn-small-danger", "Hapus");
+    del.type = "button";
+    del.dataset.action = "delete";
+    actions.appendChild(edit);
+    actions.appendChild(del);
+
+    info.appendChild(actions);
+    card.appendChild(info);
+    return card;
+  }
+
+  function renderVehicles(vehicles) {
+    list.replaceChildren();
+    if (!vehicles.length) {
+      list.appendChild(emptyBlock());
+      return;
+    }
+    var grid = makeEl("div", "vehicle-grid");
+    vehicles.forEach(function (item) { grid.appendChild(buildVehicleCard(item)); });
+    list.appendChild(grid);
+  }
+
+  function renderTabs(counts) {
+    tabs.hidden = !counts.all;
+    tabs.querySelectorAll(".vehicle-tab").forEach(function (tab) {
+      var filter = tab.dataset.filter || "";
+      tab.classList.toggle("active", filter === currentFilter);
+      tab.querySelector(".vehicle-tab-count").textContent = counts[filter || "all"] || 0;
+    });
+  }
+
+  async function loadVehicles() {
+    var id = ++latest;
+    var url = URLS.vehicles +
+      (currentFilter ? "?vehicle_type=" + encodeURIComponent(currentFilter) : "");
+    list.classList.add("is-loading");
+    list.setAttribute("aria-busy", "true");
+    try {
+      var result = await request(url);
+      if (id !== latest) return;                 // abaikan respons yang sudah basi
+      if (result.response.status === 401) { goToLogin(); return; }
+      if (!result.response.ok) throw new Error("HTTP " + result.response.status);
+      renderTabs(result.data.counts);
+      renderVehicles(result.data.vehicles);
+    } catch (error) {
+      if (id !== latest) return;
+      showToast("Gagal memuat kendaraan", "Muat ulang halaman untuk mencoba lagi.", "error");
+    } finally {
+      if (id === latest) {
+        list.classList.remove("is-loading");
+        list.removeAttribute("aria-busy");
+      }
+    }
+  }
+
+  if (list && tabs) {
+    tabs.addEventListener("click", function (e) {
+      var tab = e.target.closest("a.vehicle-tab");
+      if (!tab) return;
+      e.preventDefault();
+      currentFilter = tab.dataset.filter || "";
+      history.replaceState(null, "", tab.getAttribute("href"));
+      loadVehicles();
+    });
+  }
+
+  // ------------------------------------------------------ modal tambah/edit
+  function clearErrors() {
+    form.querySelectorAll("[data-error-for]").forEach(function (el) {
+      el.textContent = "";
+    });
+  }
+
+  function showGeneralError(message) {
+    form.querySelector('[data-error-for="__all__"]').textContent = message;
+  }
+
+  // errors = form.errors.get_json_data(): { field: [{ message, code }, ...] }
+  function showFieldErrors(errors) {
+    Object.keys(errors).forEach(function (key) {
+      var text = errors[key].map(function (err) { return err.message; }).join(" ");
+      var slot = form.querySelector('[data-error-for="' + key + '"]') ||
+                 form.querySelector('[data-error-for="__all__"]');
+      slot.textContent = slot.textContent ? slot.textContent + " " + text : text;
+    });
+  }
+
+  function openModal(mode, data) {
+    data = data || {};
+    clearErrors();
+    form.reset();
+    form.dataset.mode = mode;
+    form.dataset.pk = data.pk || "";
+    byId("vehicle-modal-title").textContent =
+      mode === "edit" ? "Edit Kendaraan" : "Tambah Kendaraan";
+    byId("vehicle-submit").textContent = mode === "edit" ? "Simpan" : "Tambah";
+
+    if (mode === "edit") {
+      form.elements["vehicle_type"].value = data.type;
+      form.elements["name"].value = data.name;
+      form.elements["plate_number"].value = data.plate;
+      form.elements["capacity"].value = data.capacity;
+    }
+    modal.showPopover();
+    form.elements["name"].focus();
+  }
+
+  function closeModal() {
+    if (modal.matches(":popover-open")) modal.hidePopover();
+  }
+
+  if (modal && form) {
+    var addButton = byId("vehicle-add-btn");
+    if (addButton) {
+      addButton.addEventListener("click", function (e) {
+        if (!supportsPopover) return;            // browser lama: pakai halaman biasa
+        e.preventDefault();
+        openModal("create");
+      });
+    }
+
+    modal.querySelectorAll("[data-close-modal]").forEach(function (btn) {
+      btn.addEventListener("click", closeModal);
+    });
+
+    form.addEventListener("submit", async function (e) {
+      if (!supportsPopover) return;
+      e.preventDefault();
+      clearErrors();
+
+      var editing = form.dataset.mode === "edit";
+      var url = editing ? withId(URLS.vehicleEdit, form.dataset.pk) : URLS.vehicleCreate;
+      var submit = byId("vehicle-submit");
+      submit.disabled = true;
+
+      try {
+        var result = await request(url, postOptions(new FormData(form)));
+        if (result.response.ok) {
+          closeModal();
+          showToast("Berhasil", result.data.message, "success");
+          loadVehicles();
+        } else if (result.response.status === 400 && result.data.errors) {
+          showFieldErrors(result.data.errors);
+        } else if (result.response.status === 401) {
+          closeModal();
+          goToLogin();
+        } else {
+          // Pesan di dalam modal: toast kalah tinggi dari modal yang sedang terbuka
+          showGeneralError(failureMessage(result));
+        }
+      } catch (error) {
+        showGeneralError("Tidak dapat terhubung ke server. Silakan coba lagi.");
+      } finally {
+        submit.disabled = false;
+      }
+    });
+  }
+
+  // ------------------------------------------------------ edit & hapus kartu
+  async function deleteVehicle(card, button) {
+    if (!window.confirm("Hapus " + card.dataset.name + " (" + card.dataset.plate + ")?")) return;
+    button.disabled = true;
+    try {
+      var result = await request(withId(URLS.vehicleDelete, card.dataset.pk), postOptions());
+      if (result.response.ok) {
+        showToast("Berhasil", result.data.message, "success");
+        loadVehicles();
+      } else if (result.response.status === 401) {
+        goToLogin();
+      } else {
+        showToast("Gagal menghapus kendaraan", failureMessage(result), "error");
+        button.disabled = false;
+      }
+    } catch (error) {
+      showToast("Gagal menghapus kendaraan", "Tidak dapat terhubung ke server.", "error");
+      button.disabled = false;
+    }
+  }
+
+  if (list) {
+    // Satu listener untuk semua kartu, termasuk kartu yang dibuat ulang oleh JavaScript
+    list.addEventListener("click", function (e) {
+      var control = e.target.closest("[data-action]");
+      if (!control) return;
+      var card = control.closest(".vehicle-card");
+      if (!card) return;
+
+      if (control.dataset.action === "edit") {
+        if (!supportsPopover) return;            // biarkan tautan membuka halaman edit
+        e.preventDefault();
+        openModal("edit", card.dataset);
+      } else if (control.dataset.action === "delete") {
+        e.preventDefault();                      // cegah form hapus biasa terkirim
+        deleteVehicle(card, control);
+      }
+    });
+  }
+
+  // ------------------------------------------------------ penukaran poin
+  var exchangeForm = byId("exchange-form");
+
+  function applyEcoState(state) {
+    byId("eco-points-value").textContent = state.reward_points;
+    byId("eco-balance").textContent = state.balance_display;
+
+    var canExchange = state.exchange_lots > 0;
+    byId("eco-exchange-box").hidden = !canExchange;
+    byId("eco-progress-box").hidden = canExchange;
+    byId("exchange-max-note").textContent =
+      "Maksimal " + state.exchange_lots + " paket dengan poinmu sekarang.";
+    byId("points-to-next-note").textContent =
+      "Butuh " + state.points_to_next + " poin lagi untuk penukaran berikutnya.";
+    byId("progress-bar").style.width = state.progress_pct + "%";
+
+    var input = byId("exchange-lots");
+    input.max = Math.max(state.exchange_lots, 1);
+    input.value = 1;
+  }
+
+  function prependRedemption(item) {
+    var ul = byId("redemption-list");
+    var li = makeEl("li");
+    li.appendChild(makeEl("span", "", item.points + " poin → " + item.amount_display));
+    li.appendChild(makeEl("span", "eco-date", item.created_display));
+    ul.prepend(li);
+    while (ul.children.length > 3) ul.lastElementChild.remove();   // tampilkan 3 terakhir
+    ul.hidden = false;
+  }
+
+  if (exchangeForm) {
+    exchangeForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      var button = exchangeForm.querySelector("button[type=submit]");
+      button.disabled = true;
+      try {
+        var result = await request(URLS.redeem, postOptions(new FormData(exchangeForm)));
+        if (result.response.ok) {
+          applyEcoState(result.data.state);
+          prependRedemption(result.data.redemption);
+          showToast("Penukaran berhasil", result.data.message, "success");
+        } else if (result.response.status === 401) {
+          goToLogin();
+        } else {
+          showToast("Penukaran gagal", failureMessage(result), "error");
+        }
+      } catch (error) {
+        showToast("Penukaran gagal", "Tidak dapat terhubung ke server.", "error");
+      } finally {
+        button.disabled = false;
+      }
+    });
+  }
+})();
+</script>

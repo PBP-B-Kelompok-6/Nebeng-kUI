@@ -1,0 +1,22 @@
+<div id="toast-container" class="toast-container" aria-live="polite"></div>
+<script>
+  // showToast("Judul", "Pesan", "success" | "error" | "info")
+  function showToast(title, message, type) {
+    var container = document.getElementById("toast-container");
+    if (!container) return;
+
+    var toast = document.createElement("div");
+    toast.className = "toast toast-" + (type || "info");
+    toast.setAttribute("role", type === "error" ? "alert" : "status");
+
+    var heading = document.createElement("strong");
+    heading.textContent = title;           // textContent: aman dari HTML tak terduga
+    var body = document.createElement("span");
+    body.textContent = message;
+
+    toast.appendChild(heading);
+    toast.appendChild(body);
+    container.appendChild(toast);
+    setTimeout(function () { toast.remove(); }, 4500);
+  }
+</script>

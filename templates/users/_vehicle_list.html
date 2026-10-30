@@ -1,7 +1,12 @@
 {% if vehicles %}
   <div class="vehicle-grid">
     {% for vehicle in vehicles %}
-    <article class="vehicle-card">
+    <article class="vehicle-card"
+             data-pk="{{ vehicle.pk }}"
+             data-type="{{ vehicle.vehicle_type }}"
+             data-name="{{ vehicle.name }}"
+             data-plate="{{ vehicle.plate_number }}"
+             data-capacity="{{ vehicle.capacity }}">
       <div class="vehicle-icon">{% if vehicle.vehicle_type == "motor" %}🏍️{% else %}🚗{% endif %}</div>
       <div class="vehicle-info">
         <span class="vehicle-label">{{ vehicle.get_vehicle_type_display }}</span>
@@ -9,11 +14,10 @@
         <p class="vehicle-plate">{{ vehicle.plate_number }}</p>
         <p class="vehicle-meta">Kapasitas: {{ vehicle.capacity }} kursi</p>
         <div class="vehicle-actions">
-          <a href="{% url 'users:vehicle_edit' vehicle.pk %}" class="btn-small btn-small-outline">Edit</a>
-          <form method="post" action="{% url 'users:vehicle_delete' vehicle.pk %}"
-                onsubmit="return confirm('Hapus kendaraan ini?');">
+          <a href="{% url 'users:vehicle_edit' vehicle.pk %}" class="btn-small btn-small-outline" data-action="edit">Edit</a>
+          <form method="post" action="{% url 'users:vehicle_delete' vehicle.pk %}">
             {% csrf_token %}
-            <button type="submit" class="btn-small btn-small-danger">Hapus</button>
+            <button type="submit" class="btn-small btn-small-danger" data-action="delete">Hapus</button>
           </form>
         </div>
       </div>
