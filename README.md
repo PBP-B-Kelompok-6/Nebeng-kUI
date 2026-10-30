@@ -64,3 +64,29 @@ Peran Pengguna:
    * Tautan Deployment (PWS): https://vincent-armando-nebengkui.pws.cs.ui.ac.id/
    * Tautan Desain UI/Wireframe (Figma): https://www.figma.com/design/NBWjUCqdKOdoI8wgXfTb5E/Nebeng-kUI?node-id=0-1&t=calHUAJZhuKMqxEM-1
    * Tautan System Design: https://drive.google.com/file/d/1eBAYazG7ObP_Oq-u8arAwh9j7H5QoSvr/view?usp=sharing
+
+## AI DISCLOSURE
+1. Andrew Chandra Halim / 2506656431 
+   Mayoritas proyek tengah semester saya kerjakan dibantu oleh Claude AI model Sonnet 5.5. Namun jika hasilnya masih belum memenuhi harapan tim, saya bersama anggota lain melakukan diskusi ulang untuk fix kodenya.
+   Tautan: https://claude.ai/share/6c477e53-51cf-44e6-a9fa-dbe6de5010a4
+
+2. Muhammad Ridho Anwar / 2506595745
+   Menggunakan AI (Claude) untuk membantu fetch data dari overpass (API), mencari referensi, dan brainstorming.
+   Tautan: https://claude.ai/share/38e82e4c-2027-457e-97a1-e176f2661acc
+   
+3. Vincent Armando / 2506618540
+   Dalam tugas ini, saya menggunakan AI (Claude) untuk membantu menyusun draf kode modul Forum Tebengan, menelaah error dan bug, serta menulis kode yang repetitif seperti template dan CSS. Keputusan desain dan alur fitur ditentukan sendiri, lalu seluruh kode diuji dan disesuaikan secara manual berdasarkan materi tutorial dan kelas
+
+   Bagian yang dibantu AI:
+   - Menelaah error dan bug saat runserver atau migrate (contoh: ModuleNotFoundError, ImportError, InconsistentMigrationHistory)
+   - Menulis draf kode yang repetitif, seperti template, CSS, dan view untuk alur Nebeng
+   - Menyesuaikan kode dengan modul teman (reservasi dan chat)
+
+   Kelemahan AI:
+   AI tidak memiliki pengetahuan yang cukup mengenai konteks dan struktur code sehingga cenderung menebak-nebak nama variable, fungsi, struktor code, dan membuat intepretasi sendiri
+
+   Perbaikan manual:
+   Perbaikan manual dilakukan dengan cara melakukan testing pada sistem, menyesuaikan konteks dan struktur setiap code dan memastikan tidak ada kontradiksi yang berarti
+
+4. Fadlan Fathul Islam / 2506601275
+   Saya menggunakan AI Gemini Pro 3.1 sepanjang pengerjaan tugas ini, mulai dari alur kerja, penjelasan logika django, mempercepat penulisan html, pembuatan css instan, dan pembuatan unittest. Memang AI terasa sangat membantu untuk mempercepat pekerjaan terutama pekerjaan yang memerlukan pengetikan banyak, tapi penggunaan AI tetap harus dalam kendali manusia karena konteks AI itu lemah. berkali kali AI lupa tentang konteks logika yang saya inginkan sehingga pengambilan keputusan, penentuan pemakaian kode, dan juga hasil akhir tetap ada di tangan saya. berikut link pdf sebagian chat saya dengan gemini: https://drive.google.com/file/d/1gMZwjd-x2l_2Pl4xsDmYEZCB5cwnJfsl/view?usp=sharing (terjadi error ketika mencoba share chat, mungkin karena saya hanya menggunakan satu sesi chat untuk semua hal sehingga sangat banyak jika dihitung semuanya(termasuk hal di luar pbp))
