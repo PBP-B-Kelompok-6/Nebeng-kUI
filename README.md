@@ -61,6 +61,7 @@ Peran Pengguna:
    Initial Data: Proyek ini akan di-seed dengan 50 data awal yang berisi daftar titik lokasi kumpul strategis (seperti halte bis kuning, stasiun KRL, gerbang fakultas, dan area kos).
 
 ##  Tautan Penting
+   * Jalankan 'python manage.py seed_titik' setelah migrate agar marker muncul di peta.
    * Tautan Deployment (PWS): https://vincent-armando-nebengkui.pws.cs.ui.ac.id/
    * Tautan Desain UI/Wireframe (Figma): https://www.figma.com/design/NBWjUCqdKOdoI8wgXfTb5E/Nebeng-kUI?node-id=0-1&t=calHUAJZhuKMqxEM-1
    * Tautan System Design: https://drive.google.com/file/d/1eBAYazG7ObP_Oq-u8arAwh9j7H5QoSvr/view?usp=sharing
@@ -68,4 +69,9 @@ Peran Pengguna:
 ## AI DISCLOSURE
 1. Andrew Chandra Halim / 2506656431 
    Mayoritas proyek tengah semester saya kerjakan dibantu oleh Claude AI model Sonnet 5.5. Namun jika hasilnya masih belum memenuhi harapan tim, saya bersama anggota lain melakukan diskusi ulang untuk fix kodenya.
-   Tautan : https://claude.ai/share/6c477e53-51cf-44e6-a9fa-dbe6de5010a4
+   Tautan: https://claude.ai/share/6c477e53-51cf-44e6-a9fa-dbe6de5010a4
+
+2. Muhammad Ridho Anwar / 2506595745
+   Menggunakan Claude untuk membantu fetch data dari overpass (API), mencari referensi, dan brainstorming.
+   Tautan: https://claude.ai/share/38e82e4c-2027-457e-97a1-e176f2661acc
+   
