@@ -88,4 +88,6 @@ Peran Pengguna:
 
    Perbaikan manual:
    Perbaikan manual dilakukan dengan cara melakukan testing pada sistem, menyesuaikan konteks dan struktur setiap code dan memastikan tidak ada kontradiksi yang berarti
-   
+
+4. Fadlan Fathul Islam / 2506601275
+   Saya menggunakan AI Gemini Pro 3.1 sepanjang pengerjaan tugas ini, mulai dari alur kerja, penjelasan logika django, mempercepat penulisan html, pembuatan css instan, dan pembuatan unittest. Memang AI terasa sangat membantu untuk mempercepat pekerjaan terutama pekerjaan yang memerlukan pengetikan banyak, tapi penggunaan AI tetap harus dalam kendali manusia karena konteks AI itu lemah. berkali kali AI lupa tentang konteks logika yang saya inginkan sehingga pengambilan keputusan, penentuan pemakaian kode, dan juga hasil akhir tetap ada di tangan saya. berikut link pdf sebagian chat saya dengan gemini: https://drive.google.com/file/d/1gMZwjd-x2l_2Pl4xsDmYEZCB5cwnJfsl/view?usp=sharing (terjadi error ketika mencoba share chat, mungkin karena saya hanya menggunakan satu sesi chat untuk semua hal sehingga sangat banyak jika dihitung semuanya(termasuk hal di luar pbp))

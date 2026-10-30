@@ -303,22 +303,6 @@
         if (event.target === document.getElementById('modal-unsend-pesan')) closeUnsendModal();
     });
 
-    document.addEventListener('DOMContentLoaded', function () {
-        const chatHistory = document.querySelector('.chat-history-area');
-        if (chatHistory) chatHistory.scrollTop = chatHistory.scrollHeight;
-
-        const search = document.getElementById('chat-search');
-        if (search) {
-            search.addEventListener('input', function () {
-                const q = search.value.toLowerCase().trim();
-                document.querySelectorAll('.chat-link').forEach(function (link) {
-                    const card = link.querySelector('.chat-card');
-                    const text = card ? card.getAttribute('data-search') : '';
-                    link.style.display = text.indexOf(q) !== -1 ? 'block' : 'none';
-                });
-            });
-        }
-    });
 
     function openSelesaiModal(url) {
         document.getElementById('form-selesai-modal').action = url;
@@ -332,5 +316,138 @@
     window.addEventListener('click', function (event) {
         if (event.target === document.getElementById('modal-selesai-pesan')) closeSelesaiModal();
     });
-</script>
+    
+    document.addEventListener('DOMContentLoaded', function () {
+            const chatHistory = document.querySelector('.chat-history-area');
+            if (chatHistory) chatHistory.scrollTop = chatHistory.scrollHeight;
+
+            // Pencarian Chat Sidebar
+            const search = document.getElementById('chat-search');
+            if (search) {
+                search.addEventListener('input', function () {
+                    const q = search.value.toLowerCase().trim();
+                    document.querySelectorAll('.chat-link').forEach(function (link) {
+                        const card = link.querySelector('.chat-card');
+                        const text = card ? card.getAttribute('data-search') : '';
+                        link.style.display = text.indexOf(q) !== -1 ? 'block' : 'none';
+                    });
+                });
+            }
+
+            // Helper AJAX (Memaksa parsing JSON secara ketat)
+            async function sendAjaxForm(formElement, onSuccess) {
+                try {
+                    const targetUrl = formElement.action || window.location.href;
+                    const response = await fetch(targetUrl, {
+                        method: 'POST',
+                        body: new FormData(formElement),
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
+
+                    if (response.headers.get('content-type')?.includes('application/json')) {
+                        const data = await response.json();
+                        if (response.ok && data.status === 'success') {
+                            onSuccess(data);
+                        } else {
+                            alert(data.message || 'Terjadi kesalahan pada server.');
+                        }
+                    } else {
+                        console.warn("Server merespons bukan dengan JSON. Memaksa reload untuk sinkronisasi.");
+                        window.location.reload();
+                    }
+                } catch (err) {
+                    console.error("AJAX Fetch Error:", err);
+                    alert("Gagal terhubung ke server.");
+                }
+            }
+
+            // 1. Kirim Pesan (DOM Insert) - Menggunakan Event Listener Langsung pada Body Form
+            const chatForm = document.querySelector('.chat-form');
+            if (chatForm) {
+                chatForm.onsubmit = function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const input = this.querySelector('input[name="teks_pesan"]');
+                    if (!input.value.trim()) return false;
+
+                    sendAjaxForm(this, function (data) {
+                        input.value = '';
+                        if (chatHistory && data.pesan) {
+                            const newBubble = `
+                        <div class="chat-bubble right">
+                            <div class="bubble-content">
+                                <p>${data.pesan.teks}</p>
+                                <div class="bubble-meta">
+                                    <span class="bubble-time">${data.pesan.timestamp}</span>
+                                </div>
+                            </div>
+                            <span class="ride-avatar">${data.pesan.pengirim[0].toUpperCase()}</span>
+                        </div>`;
+                            chatHistory.insertAdjacentHTML('beforeend', newBubble);
+                            chatHistory.scrollTop = chatHistory.scrollHeight;
+                        }
+                    });
+                    return false; // Memastikan form HTML default tidak ter-submit
+                };
+            }
+
+            // 2. Edit Pesan (DOM Update)
+            const formEdit = document.getElementById('form-edit-modal');
+            if (formEdit) {
+                formEdit.onsubmit = function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    sendAjaxForm(this, function (data) {
+                        closeEditModal();
+                        const lastBubbleText = document.querySelector('.chat-history-area .chat-bubble.right:last-child .bubble-content p');
+                        if (lastBubbleText && data.teks_baru) {
+                            lastBubbleText.textContent = data.teks_baru;
+                        }
+                    });
+                    return false;
+                };
+            }
+
+            // 3. Unsend Pesan (DOM Remove)
+            const formUnsend = document.getElementById('form-unsend-modal');
+            if (formUnsend) {
+                formUnsend.onsubmit = function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    sendAjaxForm(this, function () {
+                        closeUnsendModal();
+                        const lastBubble = document.querySelector('.chat-history-area .chat-bubble.right:last-child');
+                        if (lastBubble) {
+                            lastBubble.remove();
+                        }
+                    });
+                    return false;
+                };
+            }
+
+            // 4. Selesaikan Perjalanan (DOM Replace)
+            const formSelesai = document.getElementById('form-selesai-modal');
+            if (formSelesai) {
+                formSelesai.onsubmit = function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    sendAjaxForm(this, function () {
+                        closeSelesaiModal();
+                        const btnSelesai = document.querySelector('.btn-selesai-trip');
+                        if (btnSelesai) {
+                            btnSelesai.outerHTML = '<span class="badge-trip-selesai">Selesai</span>';
+                        }
+                    });
+                    return false;
+                };
+            }
+        });
+    </script>
 {% endblock content %}
