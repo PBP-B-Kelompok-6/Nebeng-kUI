@@ -90,6 +90,13 @@ class PostCreateView(LoginRequiredMixin, CreateView):
     
     def form_valid(self, form):
         form.instance.author = self.request.user
+        
+        # 2. Tarik data kendaraan yang dipilih dari form
+        kendaraan_pilihan = form.cleaned_data['kendaraan']
+        
+        # 3. Salin kapasitas kendaraan ke max_quota milik postingan
+        sisa_kursi_penumpang = kendaraan_pilihan.capacity - 1
+        form.instance.max_quota = max(sisa_kursi_penumpang, 1)
         return super().form_valid(form)
 
 

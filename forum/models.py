@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from maps.models import TitikKumpul
 
 
 class RidePost(models.Model):
@@ -19,6 +20,20 @@ class RidePost(models.Model):
     notes = models.TextField(blank=True)
     status = models.CharField(max_length=10, choices=Status.choices, default=Status.AKTIF)
     created_at = models.DateTimeField(auto_now_add=True)
+    pickup_node = models.ForeignKey(
+        TitikKumpul, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True, 
+        related_name="pickup_posts"
+    )
+    destination_node = models.ForeignKey(
+        TitikKumpul, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True, 
+        related_name="destination_posts"
+    )
 
     class Meta:
         ordering = ["-created_at"]

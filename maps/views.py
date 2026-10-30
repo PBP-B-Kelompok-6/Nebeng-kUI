@@ -5,6 +5,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_GET, require_POST, require_http_methods
 from django.contrib.auth.decorators import login_required
+from .overpass import ambil_titik_ui
 
 from .models import *
 from .overpass import ambil_titik_ui, tambah_jarak
@@ -18,6 +19,7 @@ def halaman_peta(request):
 
 @require_GET
 def api_titik(request):
+
     qs = TitikKumpul.objects.filter(aktif=True)
  
     kategori = request.GET.get("kategori")

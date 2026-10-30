@@ -149,7 +149,17 @@
                         <span class="badge-trip-selesai">Selesai</span>
                         {% endif %}
                         {% endif %}
-                        <button type="button" class="btn-peta">Buka Peta</button>
+                        {% if reservasi_aktif.tebengan.pickup_node and reservasi_aktif.tebengan.destination_node %}
+                        <a href="{% url 'maps:halaman' %}?start_lat={{ reservasi_aktif.tebengan.pickup_node.lat }}&start_lon={{ reservasi_aktif.tebengan.pickup_node.lon }}&end_lat={{ reservasi_aktif.tebengan.destination_node.lat }}&end_lon={{ reservasi_aktif.tebengan.destination_node.lon }}"
+                            target="_blank" class="btn-peta"
+                            style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
+                            Buka Peta
+                        </a>
+                        {% else %}
+                        <button type="button" class="btn-peta" onclick="alert('Koordinat peta tidak tersedia untuk tebengan ini.')">
+                            Buka Peta
+                        </button>
+                        {% endif %}
                     </div>
                 </div>
 
