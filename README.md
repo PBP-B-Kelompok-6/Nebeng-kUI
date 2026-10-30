@@ -72,6 +72,20 @@ Peran Pengguna:
    Tautan: https://claude.ai/share/6c477e53-51cf-44e6-a9fa-dbe6de5010a4
 
 2. Muhammad Ridho Anwar / 2506595745
-   Menggunakan Claude untuk membantu fetch data dari overpass (API), mencari referensi, dan brainstorming.
+   Menggunakan AI (Claude) untuk membantu fetch data dari overpass (API), mencari referensi, dan brainstorming.
    Tautan: https://claude.ai/share/38e82e4c-2027-457e-97a1-e176f2661acc
+   
+3. Vincent Armando / 2506618540
+   Dalam tugas ini, saya menggunakan AI (Claude) untuk membantu menyusun draf kode modul Forum Tebengan, menelaah error dan bug, serta menulis kode yang repetitif seperti template dan CSS. Keputusan desain dan alur fitur ditentukan sendiri, lalu seluruh kode diuji dan disesuaikan secara manual berdasarkan materi tutorial dan kelas
+
+   Bagian yang dibantu AI:
+   - Menelaah error dan bug saat runserver atau migrate (contoh: ModuleNotFoundError, ImportError, InconsistentMigrationHistory)
+   - Menulis draf kode yang repetitif, seperti template, CSS, dan view untuk alur Nebeng
+   - Menyesuaikan kode dengan modul teman (reservasi dan chat)
+
+   Kelemahan AI:
+   AI tidak memiliki pengetahuan yang cukup mengenai konteks dan struktur code sehingga cenderung menebak-nebak nama variable, fungsi, struktor code, dan membuat intepretasi sendiri
+
+   Perbaikan manual:
+   Perbaikan manual dilakukan dengan cara melakukan testing pada sistem, menyesuaikan konteks dan struktur setiap code dan memastikan tidak ada kontradiksi yang berarti
    
