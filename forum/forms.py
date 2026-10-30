@@ -5,13 +5,12 @@ from users.models import Vehicle
 class RidePostForm(forms.ModelForm):
     class Meta:
         model = RidePost
-        fields = ["kendaraan","pickup_point", "destination", "departure_time", "max_quota", "notes"]
+        fields = ["kendaraan","pickup_point", "destination", "departure_time", "notes"]
         labels = {
             "kendaraan" : "Kendaraan",
             "pickup_point": "Titik jemput",
             "destination": "Tujuan",
             "departure_time": "Waktu berangkat",
-            "max_quota": "Jumlah kursi tersedia",
             "notes": "Catatan (opsional)",
         }
         
@@ -22,7 +21,7 @@ class RidePostForm(forms.ModelForm):
             "departure_time": forms.DateTimeInput(
                 attrs={"type": "datetime-local"}, format="%Y-%m-%dT%H:%M"
             ),
-            "max_quota": forms.NumberInput(attrs={"min": 1, "max": 6}),
+
             "notes": forms.Textarea(attrs={"rows": 3, "placeholder": "Motor/mobil, patokan, dll."}),
         }
 
