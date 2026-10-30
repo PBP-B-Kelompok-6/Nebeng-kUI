@@ -62,7 +62,7 @@ Peran Pengguna:
 
 ##  Tautan Penting
    * Jalankan 'python manage.py seed_titik' setelah migrate agar marker muncul di peta.
-   * Tautan Deployment (PWS): https://vincent-armando-nebengkui.pws.cs.ui.ac.id/
+   * Tautan Deployment (PWS): https://muhammad-ridho52-nebengkui.pws.cs.ui.ac.id/
    * Tautan Desain UI/Wireframe (Figma): https://www.figma.com/design/NBWjUCqdKOdoI8wgXfTb5E/Nebeng-kUI?node-id=0-1&t=calHUAJZhuKMqxEM-1
    * Tautan System Design: https://drive.google.com/file/d/1eBAYazG7ObP_Oq-u8arAwh9j7H5QoSvr/view?usp=sharing
 
