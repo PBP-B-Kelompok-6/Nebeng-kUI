@@ -11,8 +11,8 @@ class RidePost(models.Model):
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="ride_posts"
     )
-    pickup_point = models.CharField(max_length=200)
-    destination = models.CharField(max_length=200)
+    pickup_point = models.CharField(max_length=200, blank=True)
+    destination = models.CharField(max_length=200, blank=True)
     kendaraan = models.ForeignKey('users.Vehicle', on_delete=models.CASCADE, null=True, blank=True)
     departure_time = models.DateTimeField()
     max_quota = models.PositiveSmallIntegerField(default=1)
@@ -46,6 +46,10 @@ class RidePost(models.Model):
         self.status = (
             self.Status.PENUH if self.filled_quota >= self.max_quota else self.Status.AKTIF
         )
+        if self.pickup_node:
+            self.pickup_point = self.pickup_node.nama
+        if self.destination_node:
+            self.destination = self.destination_node.nama
         super().save(*args, **kwargs)
 
     def __str__(self):

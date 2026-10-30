@@ -52,7 +52,8 @@
                             Permintaan
                             {% if post.pending_count %}<span class="count-badge">{{ post.pending_count }}</span>{% endif %}
                         </a>
-                        <a href="{% url 'forum:delete' post.pk %}" class="btn-small btn-small-danger">Hapus</a>
+                        <button type="button" class="btn-small btn-small-danger btn-hapus"
+                            data-url="{% url 'forum:delete' post.pk %}">Hapus</button>
                     {% elif not user.is_authenticated %}
                         <a href="{% url 'users:login' %}?next={{ request.path }}" class="btn-small btn-small-primary">Nebeng</a>
                     {% else %}
@@ -63,9 +64,8 @@
                                     <a href="{% url 'reservasi:show_reservasi' %}?id={{ res.id }}" class="btn-small btn-small-primary">Chat</a>
                                 {% endif %}
                             {% elif post.status == 'aktif' %}
-                                <form method="post" action="{% url 'reservasi:join' post.pk %}">
+                                <form class="form-join" method="post" action="{% url 'reservasi:join' post.pk %}">
                                     {% csrf_token %}
-                                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
                                     <button type="submit" class="btn-small btn-small-primary">Nebeng</button>
                                 </form>
                             {% else %}
@@ -83,4 +83,70 @@
         {% endfor %}
     </div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // 1. AJAX Hapus Postingan (Tanpa Pindah Halaman)
+        document.querySelectorAll('.btn-hapus').forEach(button => {
+            button.addEventListener('click', async function () {
+                if (!confirm("Apakah Anda yakin ingin menghapus tebengan ini?")) return;
+
+                const url = this.getAttribute('data-url');
+                const articleCard = this.closest('article.ride-card');
+
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
+
+                    if (response.ok) {
+                        articleCard.remove(); // Hapus kotak postingan dari layar!
+                    } else {
+                        alert("Gagal menghapus.");
+                    }
+                } catch (err) {
+                    alert("Terjadi kesalahan jaringan.");
+                }
+            });
+        });
+
+        // 2. AJAX Join Tebengan (Nebeng)
+        document.querySelectorAll('.form-join').forEach(form => {
+            form.addEventListener('submit', async function (e) {
+                e.preventDefault(); // Tahan reload
+                const btn = this.querySelector('button');
+                const url = this.action;
+
+                btn.disabled = true;
+                btn.textContent = "Loading...";
+
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        body: new FormData(this),
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    });
+
+                    if (response.ok) {
+                        // Jika sukses, ganti tombol form menjadi label text 'Menunggu'
+                        const parentDiv = this.parentNode;
+                        this.remove();
+                        parentDiv.insertAdjacentHTML('beforeend', '<span class="status-chip status-menunggu">Menunggu</span>');
+                    } else {
+                        alert("Gagal join tebengan.");
+                        btn.disabled = false;
+                        btn.textContent = "Nebeng";
+                    }
+                } catch (err) {
+                    alert("Terjadi kesalahan jaringan.");
+                    btn.disabled = false;
+                    btn.textContent = "Nebeng";
+                }
+            });
+        });
+    });
+</script>
 {% endblock content %}

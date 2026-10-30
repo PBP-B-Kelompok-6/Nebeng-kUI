@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.db.models import Q
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
@@ -33,8 +33,12 @@ def join_post(request, post_id):
     post = get_object_or_404(RidePost, pk=post_id)
     if post.author == request.user:
         messages.error(request, "Kamu tidak bisa nebeng di post sendiri.")
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'status': 'error', 'message': 'Kamu tidak bisa nebeng di post sendiri.'}, status=400)
     elif post.status != RidePost.Status.AKTIF:
         messages.error(request, "Tumpangan ini sudah penuh.")
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'status': 'error', 'message': 'Tumpangan ini sudah penuh.'}, status=400)
     else:
         _, created = Reservasi.objects.get_or_create(
             tebengan=post,
@@ -65,10 +69,14 @@ def decide_reservasi(request, pk, action):
         )
         if res.status != "MENUNGGU":
             messages.error(request, "Permintaan ini sudah diproses.")
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'status': 'error', 'message': 'Permintaan ini sudah diproses.'}, status=400)
         elif action == "accept":
             post = RidePost.objects.select_for_update().get(pk=res.tebengan_id)
             if post.filled_quota >= post.max_quota:
                 messages.error(request, "Kuota sudah penuh.")
+                if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                    return JsonResponse({'status': 'error', 'message': 'Kuota sudah penuh.'}, status=400)
             else:
                 post.filled_quota += 1
                 post.save()  # status Penuh otomatis dari save()
@@ -79,6 +87,11 @@ def decide_reservasi(request, pk, action):
             res.status = "DITOLAK"
             res.save()
             messages.success(request, "Permintaan ditolak.")
+            
+    # RESPONS AJAX JIKA DIPANGGIL LEWAT JAVASCRIPT
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({'status': 'success', 'action': action})
+    
     return redirect("forum:detail", pk=res.tebengan_id)
 
 @login_required
