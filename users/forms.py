@@ -39,11 +39,12 @@ class ProfileForm(forms.ModelForm):
 
         model = User
         fields = [
-            "first_name", "last_name", "npm", "phone_number",
+            "first_name", "last_name", "middle_name", "npm", "phone_number",
             "faculty", "bio", "profile_picture",
         ]
         labels = {
             "first_name": "Nama Depan",
+            "middle_name": "Nama Tengah",
             "last_name": "Nama Belakang",
             "npm": "NPM",
             "phone_number": "Nomor HP",

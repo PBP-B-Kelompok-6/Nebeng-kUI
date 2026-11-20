@@ -115,6 +115,7 @@ def vehicle_to_json(vehicle):
             "name": vehicle.name,
             "plate_number": vehicle.plate_number,
             "capacity": vehicle.capacity,
+            
         },
     }
 

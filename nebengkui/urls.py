@@ -27,6 +27,7 @@ urlpatterns = [
 ]
 
 urlpatterns += [
+    path('api/v1/', include('users.api_urls')),
     path("api/v1/maps/", include("maps.api_urls")),
-    path("api-auth/", include("rest_framework.urls")),
+    path('api-auth/', include('rest_framework.urls')),
 ]
