@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'maps',
     'reservasi',
     'forum',
+    'rest_framework',
 ]
 
 AUTH_USER_MODEL = 'users.User'
