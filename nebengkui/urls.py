@@ -25,3 +25,8 @@ urlpatterns = [
     path('', include("reservasi.urls")),
     path("forum/", include("forum.urls")),
 ]
+
+urlpatterns += [
+    path("api/v1/maps/", include("maps.api_urls")),
+    path("api-auth/", include("rest_framework.urls")),
+]
