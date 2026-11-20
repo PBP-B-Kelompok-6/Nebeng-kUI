@@ -6,11 +6,9 @@ from maps.models import TitikKumpul
 class RidePostForm(forms.ModelForm):
     class Meta:
         model = RidePost
-        fields = ["kendaraan","pickup_point", "destination", "pickup_node", "destination_node", "departure_time", "notes"]
+        fields = ["kendaraan", "pickup_node", "destination_node", "departure_time", "notes"]
         labels = {
             "kendaraan" : "Kendaraan",
-            "pickup_point": "Lokasi jemput",
-            "destination": "Tujuan",
             "pickup_node" : "Titik jemput",
             "destination_node" : "Titik tujuan",
             "departure_time": "Waktu berangkat",
@@ -19,8 +17,6 @@ class RidePostForm(forms.ModelForm):
         
         widgets = {
             "kendaraan": forms.Select(attrs={"class": "form-control"}),
-            "pickup_point": forms.TextInput(attrs={"placeholder": "Contoh: Gerbang Kutek"}),
-            "destination": forms.TextInput(attrs={"placeholder": "Contoh: Fakultas Teknik"}),
             "pickup_node": forms.Select(attrs={"class": "form-control"}),
             "destination_node": forms.Select(attrs={"class": "form-control"}),
             "departure_time": forms.DateTimeInput(
@@ -39,6 +35,9 @@ class RidePostForm(forms.ModelForm):
                 self.fields['pickup_node'].empty_label = "-- Pilih Titik Jemput --"
                 self.fields['destination_node'].queryset = TitikKumpul.objects.filter(aktif=True)
                 self.fields['destination_node'].empty_label = "-- Pilih Titik Tujuan --"
+                # Jadikan wajib diisi agar tidak error saat di-save
+                self.fields['pickup_node'].required = True
+                self.fields['destination_node'].required = True
                 # Filter pilihan kendaraan khusus untuk user yang sedang login
                 if user:
                     self.fields['kendaraan'].queryset = Vehicle.objects.filter(owner=user)

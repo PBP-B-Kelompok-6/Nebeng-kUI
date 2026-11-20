@@ -8,6 +8,7 @@ from .forms import RidePostForm
 from .models import RidePost
 from django.db.models import Count, Prefetch, Q
 from reservasi.models import Reservasi
+from django.http import JsonResponse
 
 
 class FeedView(ListView):
@@ -97,7 +98,19 @@ class PostCreateView(LoginRequiredMixin, CreateView):
         # 3. Salin kapasitas kendaraan ke max_quota milik postingan
         sisa_kursi_penumpang = kendaraan_pilihan.capacity - 1
         form.instance.max_quota = max(sisa_kursi_penumpang, 1)
-        return super().form_valid(form)
+        # Simpan ke database
+        response = super().form_valid(form)
+
+        # BACA AJAX: Jika request dari JS, kembalikan JSON
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'status': 'success', 'message': 'Berhasil!'})
+            
+        return response
+    
+    def form_invalid(self, form):
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
+        return super().form_invalid(form)
 
 
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
@@ -107,3 +120,14 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def test_func(self):
         return self.get_object().author == self.request.user
+
+    # Ganti perilaku standar saat menerima request POST (hapus)
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.delete() # Hapus dari database
+        
+        # BACA AJAX: Balas dengan JSON
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'status': 'success'})
+            
+        return redirect(self.get_success_url())

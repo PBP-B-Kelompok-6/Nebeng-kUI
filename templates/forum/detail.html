@@ -65,11 +65,11 @@
         </div>
         <div class="ride-actions">
             {% if r.status == 'MENUNGGU' %}
-                <form method="post" action="{% url 'reservasi:decide' r.pk 'accept' %}">
+                <form class="form-decide" method="post" action="{% url 'reservasi:decide' r.pk 'accept' %}">
                     {% csrf_token %}
                     <button type="submit" class="btn-small btn-small-primary">Terima</button>
                 </form>
-                <form method="post" action="{% url 'reservasi:decide' r.pk 'reject' %}">
+                <form class="form-decide" method="post" action="{% url 'reservasi:decide' r.pk 'reject' %}">
                     {% csrf_token %}
                     <button type="submit" class="btn-small btn-small-outline">Tolak</button>
                 </form>
@@ -81,4 +81,35 @@
     {% endfor %}
     {% endif %}
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // AJAX Terima / Tolak Penumpang Tanpa Reload
+        document.querySelectorAll('.form-decide').forEach(form => {
+            form.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const url = this.action;
+                const reqRow = this.closest('.req-row');
+                const actionType = url.includes('accept') ? 'Diterima' : 'Ditolak';
+
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        body: new FormData(this),
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    });
+
+                    if (response.ok) {
+                        // Hilangkan tombol dan ganti jadi label status!
+                        const actionsDiv = reqRow.querySelector('.ride-actions');
+                        actionsDiv.innerHTML = `<span class="status-chip status-${actionType.toLowerCase()}">${actionType}</span>`;
+                    } else {
+                        alert("Gagal memproses permintaan.");
+                    }
+                } catch (err) {
+                    alert("Terjadi kesalahan jaringan.");
+                }
+            });
+        });
+    });
+</script>
 {% endblock content %}
