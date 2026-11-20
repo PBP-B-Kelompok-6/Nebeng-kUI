@@ -62,6 +62,7 @@ class UserModelTest(TestCase):
             )
 
 
+
 class VehicleModelTest(TestCase):
     def setUp(self):
         self.owner = make_user("andrew")

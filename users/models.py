@@ -9,6 +9,7 @@ from django.db.models import F
 
 # Create your models here.
 class User(AbstractUser):
+    middle_name = models.CharField(max_length=100, blank=True)
     email = models.EmailField(unique=True)
     npm = models.CharField(max_length=10, blank=True)
     phone_number = models.CharField(max_length=16, blank=True)
@@ -81,6 +82,7 @@ class Vehicle(models.Model):
     class VehicleType(models.TextChoices):
         MOTOR = "motor", "Motor"
         MOBIL = "mobil", "Mobil"
+        SEPEDA = "sepeda", "Sepeda"
 
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -102,6 +104,7 @@ class Vehicle(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    catatan = models.TextField(blank=True)
 
     class Meta:
         ordering = ["-created_at"]

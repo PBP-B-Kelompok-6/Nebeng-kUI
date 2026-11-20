@@ -115,6 +115,7 @@
     info.appendChild(makeEl("h3", "", f.name));
     info.appendChild(makeEl("p", "vehicle-plate", f.plate_number));
     info.appendChild(makeEl("p", "vehicle-meta", "Kapasitas: " + f.capacity + " kursi"));
+    //
 
     var actions = makeEl("div", "vehicle-actions");
     var edit = makeEl("a", "btn-small btn-small-outline", "Edit");
@@ -222,6 +223,7 @@
       form.elements["name"].value = data.name;
       form.elements["plate_number"].value = data.plate;
       form.elements["capacity"].value = data.capacity;
+      //
     }
     modal.showPopover();
     form.elements["name"].focus();
