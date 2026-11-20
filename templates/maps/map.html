@@ -97,20 +97,17 @@
   </section>
 </main>
 
-
+{% csrf_token %}
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (() => {
-  const API_URL = "{% url 'maps:api_titik' %}";
-  const UI_CENTER = [-6.3628, 106.8272];
-
-  // -------- catatan ----------
-  const CATATAN_URL = "{% url 'maps:api_catatan' %}";
-  const CATATAN_DETAIL = "{% url 'maps:api_catatan_detail' 0 %}";
+  const LIST_URL = "{% url 'maps_api:titik-list' %}";
+  const STAR_URL = "{% url 'maps_api:titik-star' 0 %}";                // .../titik/0/star/
+  const CATATAN_URL = "{% url 'maps_api:catatan-list' %}";
+  const CATATAN_DETAIL_URL = "{% url 'maps_api:catatan-detail' 0 %}";  // .../catatan/0/
   const LOGIN_URL = "{% url 'users:login' %}";
-  const CSRF = "{{ csrf_token }}";
-  let catatan = [];
-  let sedangEdit = null;
+  const IS_AUTHENTICATED = "{{ user.is_authenticated|yesno:'true,false' }}" === "true";
+  const UI_CENTER = [-6.3628, 106.8272];
 
   // ---------- state ----------
   let semuaTitik = [];
@@ -118,32 +115,71 @@
   let filterKategori = "";        // "" = semua
   let kataKunci = "";
   let terpilih = null;
-  const markers = new Map();      // id -> marker
-  const daftarFavorit = () => semuaTitik.filter((t) => t.starred);
+  let catatan = [];
+  let sedangEdit = null;
+  const markers = new Map();      // id titik -> marker
 
   // ---------- peta ----------
   const map = L.map("map").setView(UI_CENTER, 15);
   L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
+    referrerPolicy: "strict-origin-when-cross-origin",
     attribution: "&copy; OpenStreetMap contributors",
   }).addTo(map);
   const layerMarker = L.layerGroup().addTo(map);
 
   // ---------- util ----------
   const $ = (id) => document.getElementById(id);
-  const esc = (s) => String(s).replace(/[&<>"']/g, (c) =>
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) =>
     ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const fmtJarak = (m) => (m == null ? "" : m < 1000 ? `${m} m` : `${(m / 1000).toFixed(1)} km`);
+  const urlDengan = (pola, id) => pola.replace("/0/", `/${id}/`);
+  const keLogin = () => {
+    window.location.href = `${LOGIN_URL}?next=${encodeURIComponent(location.pathname)}`;
+  };
+
+  function getCookie(name) {
+    const prefix = `${name}=`;
+    const cookie = document.cookie.split(";").map((v) => v.trim()).find((v) => v.startsWith(prefix));
+    return cookie ? decodeURIComponent(cookie.slice(prefix.length)) : null;
+  }
+
+  function pesanError(data, status) {
+    const pesan = Object.values(data).flat().filter((v) => typeof v === "string");
+    return pesan.join(" ") || `Request gagal (HTTP ${status}).`;
+  }
+
+  // satu pintu untuk semua request ke API (method, JSON, CSRF, error)
+  async function panggilApi(url, method = "GET", payload) {
+    const res = await fetch(url, {
+      method,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "X-CSRFToken": getCookie("csrftoken") || "",
+      },
+      body: payload === undefined ? undefined : JSON.stringify(payload),
+    });
+    if (res.status === 204) return null;                 // DELETE: body kosong, jangan .json()
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(pesanError(data, res.status));
+    return data;
+  }
 
   // ---------- ambil data dari Django ----------
   async function muatTitik() {
     const params = new URLSearchParams();
     if (posisiUser) { params.set("lat", posisiUser[0]); params.set("lon", posisiUser[1]); }
-    const res = await fetch(`${API_URL}?${params}`);
-    if (!res.ok) { $("kartu-grid").innerHTML = "<p>Gagal memuat data titik.</p>"; return; }
-    semuaTitik = (await res.json()).hasil;
-    render();
+    try {
+      semuaTitik = await panggilApi(`${LIST_URL}?${params}`);   // API mengembalikan array biasa
+      render();
+    } catch (err) {
+      console.error(err);
+      $("kartu-grid").innerHTML = "<p>Gagal memuat data titik.</p>";
+    }
   }
+
+  const daftarFavorit = () => semuaTitik.filter((t) => t.is_starred);
 
   function titikTersaring() {
     return semuaTitik.filter((t) => {
@@ -177,25 +213,27 @@
     const grid = $("kartu-grid");
     if (!data.length) { grid.innerHTML = "<p>Tidak ada titik yang cocok.</p>"; return; }
     grid.innerHTML = data.slice(0, 12).map((t) => `
-      <article class="kartu-titik" data-id="${esc(t.id)}">
+      <article class="kartu-titik" data-id="${t.id}">
         <div class="kartu-atas">
-          <span class="badge kat-${t.kategori}">${esc(t.label)}</span>
+          <span class="badge kat-${esc(t.kategori)}">${esc(t.label)}</span>
           <span class="jarak">${fmtJarak(t.jarak_m)}</span>
         </div>
         <h3>${esc(t.nama)}</h3>
         <p>${esc(t.deskripsi || "Titik strategis di area kampus UI Depok.")}</p>
         <div class="kartu-bawah">
-          <span>${(t.tebengan ?? 0)} Tebengan</span>
+          <span>${t.star_count} Favorit</span>
           <button type="button" class="btn-panah" aria-label="Lihat di peta">&rarr;</button>
         </div>
       </article>`).join("");
-    grid.querySelectorAll(".kartu-titik").forEach((el) =>
-      el.addEventListener("click", () => {
-        const t = semuaTitik.find((x) => x.id === el.dataset.id);
-        if (t) pilihTitik(t);
-        $("map").scrollIntoView({ behavior: "smooth", block: "center" });
-      }));
   }
+
+  $("kartu-grid").addEventListener("click", (e) => {
+    const kartu = e.target.closest(".kartu-titik");
+    if (!kartu) return;
+    const t = semuaTitik.find((x) => String(x.id) === kartu.dataset.id);
+    if (t) pilihTitik(t);
+    $("map").scrollIntoView({ behavior: "smooth", block: "center" });
+  });
 
   function renderStatistik() {
     $("stat-favorit").textContent = `${daftarFavorit().length} Tersimpan`;
@@ -204,14 +242,24 @@
   function renderFavorit() {
     const daftar = daftarFavorit();
     $("favorit-total").textContent = `${daftar.length} total`;
+    if (!IS_AUTHENTICATED) {
+      $("daftar-favorit").innerHTML = '<li class="kosong">Login untuk menyimpan titik favorit.</li>';
+      return;
+    }
     $("daftar-favorit").innerHTML = daftar.length
       ? daftar.map((t) => `
-          <li data-id="${esc(t.id)}">
+          <li data-id="${t.id}">
             <strong>${esc(t.nama)}</strong>
             <small>${esc(t.label)} ${t.jarak_m != null ? "· " + fmtJarak(t.jarak_m) + " dari posisi Anda" : ""}</small>
           </li>`).join("")
       : '<li class="kosong">Belum ada titik favorit.</li>';
   }
+
+  $("daftar-favorit").addEventListener("click", (e) => {
+    const li = e.target.closest("li[data-id]");
+    const t = li && semuaTitik.find((x) => String(x.id) === li.dataset.id);
+    if (t) pilihTitik(t);
+  });
 
   // ---------- interaksi ----------
   function pilihTitik(t) {
@@ -221,20 +269,24 @@
     $("terpilih-nama").textContent = t.nama;
     $("terpilih-deskripsi").textContent = t.deskripsi || "Titik strategis di area kampus UI Depok.";
     $("terpilih-info").textContent = `${t.label}${t.jarak_m != null ? " · " + fmtJarak(t.jarak_m) : ""}`;
-    $("terpilih-favorit").classList.toggle("aktif", t.starred);
+    $("terpilih-favorit").classList.toggle("aktif", !!t.is_starred);
   }
 
   async function toggleFavorit(t) {
-  const res = await fetch(`/maps/api/titik/${t.pk}/star/`, {
-    method: "POST",
-    headers: { "X-CSRFToken": "{{ csrf_token }}" },
-  });
-  if (res.redirected) { window.location.href = res.url; return; }   // belum login -> ke halaman login
-  if (!res.ok) return alert("Gagal menyimpan favorit.");
-  t.starred = (await res.json()).starred;
-  $("terpilih-favorit").classList.toggle("aktif", t.starred);
-  renderStatistik();
-  renderFavorit();
+    if (!IS_AUTHENTICATED) { keLogin(); return; }
+    const tombol = $("terpilih-favorit");
+    tombol.disabled = true;                          // cegah klik ganda (endpoint ini toggle)
+    try {
+      const baru = await panggilApi(urlDengan(STAR_URL, t.id), "POST");
+      t.is_starred = baru.is_starred;                // jangan Object.assign: jarak_m dari server bernilai null
+      t.star_count = baru.star_count;
+      tombol.classList.toggle("aktif", t.is_starred);
+      render();
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      tombol.disabled = false;
+    }
   }
 
   $("terpilih-favorit").addEventListener("click", () => terpilih && toggleFavorit(terpilih));
@@ -242,7 +294,7 @@
   $("terpilih-pilih").addEventListener("click", () => {
     if (!terpilih) return;
     // arahkan ke halaman reservasi dengan titik yang dipilih (sesuaikan URL timmu)
-    window.location.href = `/reservasi/?titik=${encodeURIComponent(terpilih.id)}&nama=${encodeURIComponent(terpilih.nama)}`;
+    window.location.href = `/reservasi/?jemput=${terpilih.id}`;
   });
 
   $("cari-titik").addEventListener("input", (e) => {
@@ -266,45 +318,38 @@
         posisiUser = [pos.coords.latitude, pos.coords.longitude];
         L.circleMarker(posisiUser, { radius: 8 }).addTo(map).bindTooltip("Lokasi Anda");
         map.flyTo(posisiUser, 16);
-        muatTitik(); // muat ulang agar jarak dihitung & diurutkan
+        muatTitik();   // muat ulang agar jarak dihitung & diurutkan oleh server
       },
       () => alert("Tidak bisa mengambil lokasi. Periksa izin lokasi browser."),
     );
   });
 
-  async function kirim(url, method, body) {
-    const res = await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json", "X-CSRFToken": CSRF },
-      body: body ? JSON.stringify(body) : undefined,
-    });
-    if (res.status === 401) {
-      window.location.href = `${LOGIN_URL}?next=${encodeURIComponent(location.pathname)}`;
-      return null;
-    }
-    return res;
-  }
-
   async function muatCatatan() {
-    const res = await fetch(CATATAN_URL);
-    const data = await res.json();
-    catatan = data.hasil;
-    renderCatatan(data.login);
+    if (!IS_AUTHENTICATED) { renderCatatan(); return; }
+    try {
+      catatan = await panggilApi(CATATAN_URL);
+    } catch (err) {
+      console.error(err);
+    }
+    renderCatatan();
   }
 
-  function renderCatatan(login = true) {
+  function renderCatatan() {
     const ul = $("daftar-catatan");
-    if (!login) { ul.innerHTML = '<li class="kosong">Login untuk menyimpan catatan.</li>'; return; }
+    if (!IS_AUTHENTICATED) {
+      ul.innerHTML = '<li class="kosong">Login untuk menyimpan catatan.</li>';
+      return;
+    }
     ul.innerHTML = catatan.length
-      ? catatan.map((c) => c.pk === sedangEdit
-          ? `<li data-pk="${c.pk}">
+      ? catatan.map((c) => c.id === sedangEdit
+          ? `<li data-id="${c.id}">
                <input class="catatan-edit" value="${esc(c.teks)}" maxlength="300">
                <div class="catatan-aksi">
                  <button type="button" data-aksi="simpan">Simpan</button>
                  <button type="button" data-aksi="batal">Batal</button>
                </div>
              </li>`
-          : `<li data-pk="${c.pk}">
+          : `<li data-id="${c.id}">
                ${c.titik_nama ? `<strong>${esc(c.titik_nama)}</strong>` : ""}
                <span>"${esc(c.teks)}"</span>
                <div class="catatan-aksi">
@@ -317,44 +362,48 @@
 
   $("daftar-catatan").addEventListener("click", async (e) => {
     const tombol = e.target.closest("button[data-aksi]");
-    if (!tombol) return;
+    if (!tombol || tombol.disabled) return;
     const li = tombol.closest("li");
-    const pk = Number(li.dataset.pk);
-    const url = CATATAN_DETAIL.replace("/0/", `/${pk}/`);
+    const id = Number(li.dataset.id);
+    const url = urlDengan(CATATAN_DETAIL_URL, id);
+    const aksi = tombol.dataset.aksi;
 
-    if (tombol.dataset.aksi === "edit") { sedangEdit = pk; renderCatatan(); return; }
-    if (tombol.dataset.aksi === "batal") { sedangEdit = null; renderCatatan(); return; }
+    if (aksi === "edit") { sedangEdit = id; renderCatatan(); return; }
+    if (aksi === "batal") { sedangEdit = null; renderCatatan(); return; }
 
-    if (tombol.dataset.aksi === "simpan") {
-      const teks = li.querySelector(".catatan-edit").value.trim();
-      const res = await kirim(url, "PUT", { teks });
-      if (!res) return;
-      if (!res.ok) return alert((await res.json()).error || "Gagal menyimpan.");
-      const baru = (await res.json()).catatan;
-      catatan = catatan.map((c) => (c.pk === pk ? baru : c));
-      sedangEdit = null;
+    tombol.disabled = true;
+    try {
+      if (aksi === "simpan") {
+        const teks = li.querySelector(".catatan-edit").value.trim();
+        const baru = await panggilApi(url, "PATCH", { teks });
+        catatan = catatan.map((c) => (c.id === id ? baru : c));
+        sedangEdit = null;
+      }
+      if (aksi === "hapus") {
+        if (!confirm("Hapus catatan ini?")) { tombol.disabled = false; return; }
+        await panggilApi(url, "DELETE");
+        catatan = catatan.filter((c) => c.id !== id);
+      }
       renderCatatan();
-    }
-
-    if (tombol.dataset.aksi === "hapus") {
-      if (!confirm("Hapus catatan ini?")) return;
-      const res = await kirim(url, "DELETE");
-      if (!res || !res.ok) return;
-      catatan = catatan.filter((c) => c.pk !== pk);
-      renderCatatan();
+    } catch (err) {
+      alert(err.message);
+      tombol.disabled = false;
     }
   });
 
   $("form-catatan").addEventListener("submit", async (e) => {
     e.preventDefault();
+    if (!IS_AUTHENTICATED) { keLogin(); return; }
     const teks = $("input-catatan").value.trim();
     if (!teks) return;
-    const res = await kirim(CATATAN_URL, "POST", { teks, titik: terpilih ? terpilih.pk : null });
-    if (!res) return;
-    if (!res.ok) return alert((await res.json()).error || "Gagal menyimpan.");
-    catatan.unshift((await res.json()).catatan);
-    $("input-catatan").value = "";
-    renderCatatan();
+    try {
+      const baru = await panggilApi(CATATAN_URL, "POST", { teks, titik: terpilih ? terpilih.id : null });
+      catatan.unshift(baru);
+      $("input-catatan").value = "";
+      renderCatatan();
+    } catch (err) {
+      alert(err.message);
+    }
   });
 
   const urlParams = new URLSearchParams(window.location.search);
